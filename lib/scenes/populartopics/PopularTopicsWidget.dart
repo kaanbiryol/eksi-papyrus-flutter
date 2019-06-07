@@ -1,3 +1,5 @@
+import 'package:eksi_papyrus/core/AppColors.dart';
+import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -16,10 +18,10 @@ class PopularTopicsListWidget extends StatelessWidget {
     final popularTopicsList = Provider.of<PopularTopicsNotifier>(context);
     final topAppBar = AppBar(
         elevation: 0.1,
-        backgroundColor: Color.fromRGBO(49, 50, 54, 1.0),
+        backgroundColor: AppColors.accent,
         title: Text(this.title));
     return Scaffold(
-        backgroundColor: Color.fromRGBO(32, 33, 37, 1.0),
+        backgroundColor: AppColors.background,
         appBar: topAppBar,
         body: FutureBuilder(
           future: PopularTopicsRequest().getPopularTopics(1),
@@ -31,11 +33,14 @@ class PopularTopicsListWidget extends StatelessWidget {
                 return Center(child: CircularProgressIndicator());
               case ConnectionState.done:
                 popularTopicsList.setPopularTopics(snapshot.data);
-                return ListView.builder(
+                return ListView.separated(
+                  separatorBuilder: (context, index) => Divider(
+                        color: AppColors.listDivider,
+                      ),
                   itemCount: popularTopicsList.getPopularTopics().length,
                   itemBuilder: (BuildContext context, int index) {
                     return makeListTile(
-                        popularTopicsList.getPopularTopics()[index]);
+                        popularTopicsList.getPopularTopics()[index], context);
                   },
                 );
             }
@@ -43,27 +48,37 @@ class PopularTopicsListWidget extends StatelessWidget {
         ));
   }
 
-  ListTile makeListTile(PopularTopic topic) {
+  ListTile makeListTile(PopularTopic topic, BuildContext context) {
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
       leading: Container(
-        padding: EdgeInsets.only(right: 12.0),
+        width: 50,
+        padding: EdgeInsets.all(12.0),
         decoration: new BoxDecoration(
-            border: new Border(
-                right: new BorderSide(width: 1.0, color: Colors.white24))),
+          color: AppColors.accent,
+          borderRadius: new BorderRadius.all(new Radius.circular(4.0)),
+        ),
         child: Text(topic.numberOfComments,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 13.0)),
       ),
       title: Text(
         topic.title,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+            color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.0),
       ),
-      // onTap: () {
-      //   Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //           builder: (context) => TopicDetails(popularTopic: topic)));
-      // },
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          CommentsWidgetRouting.routeToComments,
+          arguments: CommentsWidgetRouteArguments(topic),
+        );
+      },
     );
   }
 }

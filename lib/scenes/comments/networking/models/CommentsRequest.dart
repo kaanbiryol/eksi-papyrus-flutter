@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:eksi_papyrus/core/networking/APIConstants.dart';
 import 'package:eksi_papyrus/core/networking/Networking.dart';
-import 'package:eksi_papyrus/models/Comment.dart';
-import 'package:eksi_papyrus/models/Comments.dart';
 
-class CommentsNetworking {
+import 'Comment.dart';
+import 'Comments.dart';
+
+class CommentsRequest {
   final Networking networkManager = Networking.instance;
 
   Future<List<Comment>> getComments(String url, int page) {
@@ -15,5 +16,3 @@ class CommentsNetworking {
     });
   }
 }
-
- 
