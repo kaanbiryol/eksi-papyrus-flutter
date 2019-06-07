@@ -1,5 +1,6 @@
-import 'package:eksi_papyrus/networking/APIConstants.dart';
 import 'package:http/http.dart';
+
+import 'APIConstants.dart';
 
 enum TYPE { get, post }
 

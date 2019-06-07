@@ -3,8 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import 'PopularTopicsNotifier.dart';
-import 'networking/PopularTopicsRequest.dart';
 import 'networking/models/PopularTopic.dart';
+import 'networking/models/PopularTopicsRequest.dart';
 
 class PopularTopicsListWidget extends StatelessWidget {
   PopularTopicsListWidget({Key key, this.title}) : super(key: key);
@@ -22,7 +22,7 @@ class PopularTopicsListWidget extends StatelessWidget {
         backgroundColor: Color.fromRGBO(32, 33, 37, 1.0),
         appBar: topAppBar,
         body: FutureBuilder(
-          future: PopularTopicsNetworking().getPopularTopics(1),
+          future: PopularTopicsRequest().getPopularTopics(1),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:

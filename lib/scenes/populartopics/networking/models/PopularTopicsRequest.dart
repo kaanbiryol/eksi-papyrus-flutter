@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:eksi_papyrus/networking/APIConstants.dart';
-import 'package:eksi_papyrus/networking/Networking.dart';
+import 'package:eksi_papyrus/core/networking/APIConstants.dart';
+import 'package:eksi_papyrus/core/networking/Networking.dart';
 
-import 'models/PopularTopic.dart';
-import 'models/PopularTopics.dart';
+import 'PopularTopic.dart';
+import 'PopularTopics.dart';
 
-class PopularTopicsNetworking {
+class PopularTopicsRequest {
   final Networking networkManager = Networking.instance;
 
   Future<List<PopularTopic>> getPopularTopics(int page) {

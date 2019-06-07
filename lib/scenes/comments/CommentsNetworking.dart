@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:eksi_papyrus/core/networking/APIConstants.dart';
+import 'package:eksi_papyrus/core/networking/Networking.dart';
 import 'package:eksi_papyrus/models/Comment.dart';
 import 'package:eksi_papyrus/models/Comments.dart';
-import 'package:eksi_papyrus/networking/APIConstants.dart';
-import 'package:eksi_papyrus/networking/Networking.dart';
 
 class CommentsNetworking {
   final Networking networkManager = Networking.instance;
@@ -15,3 +15,5 @@ class CommentsNetworking {
     });
   }
 }
+
+ 
