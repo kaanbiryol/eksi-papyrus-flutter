@@ -23,7 +23,8 @@ class Networking {
     if (response.statusCode == 200) {
       return response.body;
     } else {
-      throw Exception("Failed");
+      //TODO handle errors here
+      return "";
     }
   }
 }
