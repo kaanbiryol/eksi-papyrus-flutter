@@ -5,6 +5,8 @@ import 'package:eksi_papyrus/scenes/populartopics/networking/models/PopularTopic
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'CommentsNotifier.dart';
 
@@ -50,10 +52,11 @@ class CommentsWidget extends StatelessWidget {
   ListTile makeListTile(Comment comment, BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-      title: Text(
-        comment.comment,
-        style: TextStyle(
-            color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.0),
+      title: MarkdownBody(
+        data: comment.comment,
+        onTapLink: (url) {
+          launch(url);
+        },
       ),
     );
   }

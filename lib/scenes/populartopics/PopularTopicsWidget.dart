@@ -15,37 +15,57 @@ class PopularTopicsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final popularTopicsList = Provider.of<PopularTopicsNotifier>(context);
     final topAppBar = AppBar(
         elevation: 0.1,
         backgroundColor: AppColors.accent,
         title: Text(this.title));
     return Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: topAppBar,
-        body: FutureBuilder(
-          future: PopularTopicsRequest().getPopularTopics(1),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-              case ConnectionState.waiting:
-              case ConnectionState.active:
-                return Center(child: CircularProgressIndicator());
-              case ConnectionState.done:
-                popularTopicsList.setPopularTopics(snapshot.data);
-                return ListView.separated(
-                  separatorBuilder: (context, index) => Divider(
-                        color: AppColors.listDivider,
-                      ),
-                  itemCount: popularTopicsList.getPopularTopics().length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return makeListTile(
-                        popularTopicsList.getPopularTopics()[index], context);
-                  },
-                );
-            }
-          },
-        ));
+      backgroundColor: AppColors.background,
+      appBar: topAppBar,
+      body: handleWidget(context),
+    );
+  }
+
+  Widget handleWidget(BuildContext context) {
+    final popularTopicsList = Provider.of<PopularTopicsNotifier>(context);
+    if (popularTopicsList.getPopularTopics() == null ||
+        popularTopicsList.getPopularTopics().length == 0) {
+      return FutureBuilder(
+        future: PopularTopicsRequest().getPopularTopics(1).then((response) {
+          popularTopicsList.setPopularTopics(response);
+        }),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              return Center(child: CircularProgressIndicator());
+            case ConnectionState.done:
+              return ListView.separated(
+                separatorBuilder: (context, index) => Divider(
+                      color: AppColors.listDivider,
+                    ),
+                itemCount: popularTopicsList.getPopularTopics().length,
+                itemBuilder: (BuildContext context, int index) {
+                  return makeListTile(
+                      popularTopicsList.getPopularTopics()[index], context);
+                },
+              );
+          }
+        },
+      );
+    } else {
+      return ListView.separated(
+        separatorBuilder: (context, index) => Divider(
+              color: AppColors.listDivider,
+            ),
+        itemCount: popularTopicsList.getPopularTopics().length,
+        itemBuilder: (BuildContext context, int index) {
+          return makeListTile(
+              popularTopicsList.getPopularTopics()[index], context);
+        },
+      );
+    }
   }
 
   ListTile makeListTile(PopularTopic topic, BuildContext context) {
