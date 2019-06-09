@@ -13,17 +13,13 @@ class CommentsNotifier with ChangeNotifier {
   List<Comment> getCommentList() => _commentList;
   int getCurrentPage() => _currentPage;
 
-  void setCommentsList(List<Comment> data) {
-    _commentList = data;
-  }
-
   void setCurrentPage(String url) {
     this._currentPage += 1;
     fetchComments(url);
   }
 
-  void fetchComments(String url) {
-    CommentsRequest().getComments(url, _currentPage).then((response) {
+  Future<List<Comment>> fetchComments(String url) {
+    return CommentsRequest().getComments(url, _currentPage).then((response) {
       _commentList.addAll(response);
       notifyListeners();
     });

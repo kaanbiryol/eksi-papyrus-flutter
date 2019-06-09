@@ -20,9 +20,11 @@ class Networking {
     var requestUri = Uri.https(APIConstants.API_BASE_URL, apiPath, params);
     print(requestUri.toString());
     final response = await get(requestUri);
+    // print(response.body);
     if (response.statusCode == 200) {
       return response.body;
     } else {
+      print("error");
       //TODO handle errors here
       return "";
     }

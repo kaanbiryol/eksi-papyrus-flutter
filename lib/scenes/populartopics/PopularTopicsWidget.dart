@@ -3,10 +3,8 @@ import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-
 import 'PopularTopicsNotifier.dart';
 import 'networking/models/PopularTopic.dart';
-import 'networking/models/PopularTopicsRequest.dart';
 
 class PopularTopicsListWidget extends StatelessWidget {
   PopularTopicsListWidget({Key key, this.title}) : super(key: key);
@@ -22,50 +20,55 @@ class PopularTopicsListWidget extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: topAppBar,
-      body: handleWidget(context),
+      body: makeFutureBuilder(context),
     );
   }
 
-  Widget handleWidget(BuildContext context) {
-    final popularTopicsList = Provider.of<PopularTopicsNotifier>(context);
-    if (popularTopicsList.getPopularTopics() == null ||
-        popularTopicsList.getPopularTopics().length == 0) {
-      return FutureBuilder(
-        future: PopularTopicsRequest().getPopularTopics(1).then((response) {
-          popularTopicsList.setPopularTopics(response);
-        }),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              return Center(child: CircularProgressIndicator());
-            case ConnectionState.done:
-              return ListView.separated(
-                separatorBuilder: (context, index) => Divider(
-                      color: AppColors.listDivider,
-                    ),
-                itemCount: popularTopicsList.getPopularTopics().length,
-                itemBuilder: (BuildContext context, int index) {
-                  return makeListTile(
-                      popularTopicsList.getPopularTopics()[index], context);
-                },
-              );
+  Widget makeFutureBuilder(BuildContext context) {
+    final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
+    return FutureBuilder(
+      future: notifier.fetchPopularTopics(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+          case ConnectionState.active:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.done:
+            return makeListView(context, snapshot.data);
+        }
+      },
+    );
+  }
+
+  Widget loadMoreProgress(BuildContext context) {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  Widget makeListView(BuildContext context, List<PopularTopic> data) {
+    final notifier = Provider.of<PopularTopicsNotifier>(context);
+
+    var itemList = notifier.getPopularTopics();
+    var itemCount = (itemList != null) ? itemList.length : 0;
+    return NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo is ScrollEndNotification &&
+              scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+            print("SCROLL MAXED");
+            loadMore(context);
           }
         },
-      );
-    } else {
-      return ListView.separated(
-        separatorBuilder: (context, index) => Divider(
-              color: AppColors.listDivider,
-            ),
-        itemCount: popularTopicsList.getPopularTopics().length,
-        itemBuilder: (BuildContext context, int index) {
-          return makeListTile(
-              popularTopicsList.getPopularTopics()[index], context);
-        },
-      );
-    }
+        child: ListView.separated(
+          separatorBuilder: (context, index) => Divider(
+                color: AppColors.listDivider,
+              ),
+          itemCount: itemCount,
+          itemBuilder: (BuildContext context, int index) {
+            return (index + 1 == itemCount)
+                ? loadMoreProgress(context)
+                : makeListTile(notifier.getPopularTopics()[index], context);
+          },
+        ));
   }
 
   ListTile makeListTile(PopularTopic topic, BuildContext context) {
@@ -100,5 +103,11 @@ class PopularTopicsListWidget extends StatelessWidget {
         );
       },
     );
+  }
+
+  void loadMore(BuildContext context) {
+    print("Load More");
+    final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
+    notifier.setCurrentPage();
   }
 }
