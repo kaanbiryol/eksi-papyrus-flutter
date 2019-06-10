@@ -21,8 +21,22 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: new ThemeData(primaryColor: Color.fromRGBO(58, 66, 86, 1.0)),
         home: new PopularTopicsListWidget(title: 'Papyrus'),
-        routes: {
-          CommentsWidgetRouting.routeToComments: (context) => CommentsWidget(),
+        onGenerateRoute: (settings) {
+          print(settings.name);
+          // FIX ME: Extracting args frmo MOdalRoute causes Comments widget to redraw and resend request WHY?
+          switch (settings.name) {
+            case CommentsWidgetRouting.routeToComments:
+              final CommentsWidgetRouteArguments args = settings.arguments;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return CommentsWidget(
+                    topic: args.topic,
+                  );
+                },
+              );
+              break;
+            default:
+          }
         },
       ),
     );
