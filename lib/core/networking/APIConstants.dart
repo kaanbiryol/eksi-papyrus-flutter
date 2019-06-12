@@ -3,4 +3,6 @@ class APIConstants {
   static const API_VERSION = "/api/v1/";
   static const API_POPULAR_TOPICS = API_VERSION + "popular";
   static const API_COMMENTS = API_VERSION + "comments";
+  static const API_CHANNELS = API_VERSION + "channels";
+  static const API_TOPICS = API_VERSION + "topics";
 }
