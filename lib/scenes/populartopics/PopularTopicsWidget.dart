@@ -1,5 +1,7 @@
 import 'package:eksi_papyrus/core/AppColors.dart';
+import 'package:eksi_papyrus/core/ui/CenteredTitleAppBar.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
+import 'package:eksi_papyrus/scenes/main/networking/models/Channel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -7,27 +9,47 @@ import 'PopularTopicsNotifier.dart';
 import 'networking/models/PopularTopic.dart';
 
 class PopularTopicsListWidget extends StatelessWidget {
-  PopularTopicsListWidget({Key key, this.title}) : super(key: key);
+  PopularTopicsListWidget({Key key, this.channels}) : super(key: key);
 
-  final String title;
+  final List<Channel> channels;
 
   @override
   Widget build(BuildContext context) {
-    final topAppBar = AppBar(
-        elevation: 0.1,
-        backgroundColor: AppColors.accent,
-        title: Text(this.title));
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: topAppBar,
-      body: makeFutureBuilder(context),
+    var length = channels.length;
+    print("REBUILT DefaultTabController");
+    return DefaultTabController(
+      initialIndex: 0,
+      length: length,
+      child: Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: CenteredTitleAppBar(channelList: channels),
+          body: TabBarView(children: createPageWidgets(length, context))),
     );
   }
 
-  Widget makeFutureBuilder(BuildContext context) {
+  List<Widget> createPageWidgets(int length, BuildContext context) {
+    print("REBUILT createWidgets");
+    List<Widget> pageWidgets = [];
+    final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
+
+    for (int i = 0; i < length; i++) {
+      if (notifier.hasTopicsInPage(i)) {
+        pageWidgets.add(makeListView(context, i.toString()));
+      } else {
+        pageWidgets.add(
+          makeFutureBuilder(context, channels[i].url, i.toString()),
+        );
+      }
+    }
+    return pageWidgets;
+  }
+
+  Widget makeFutureBuilder(BuildContext context, String url, String key) {
+    print("REBUILT makeFutureBuilder");
     final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
     return FutureBuilder(
-      future: notifier.fetchPopularTopics(),
+      key: PageStorageKey<String>(key),
+      future: notifier.fetchTopics(url, key),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -35,7 +57,7 @@ class PopularTopicsListWidget extends StatelessWidget {
           case ConnectionState.active:
             return Center(child: CircularProgressIndicator());
           case ConnectionState.done:
-            return makeListView(context, snapshot.data);
+            return makeListView(context, key);
         }
       },
     );
@@ -45,10 +67,11 @@ class PopularTopicsListWidget extends StatelessWidget {
     return Center(child: CircularProgressIndicator());
   }
 
-  Widget makeListView(BuildContext context, List<PopularTopic> data) {
-    final notifier = Provider.of<PopularTopicsNotifier>(context);
-
-    var itemList = notifier.getPopularTopics();
+  Widget makeListView(BuildContext context, String key) {
+    final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
+    print("REBUILT makeListView");
+    print(key);
+    var itemList = notifier.getPopularTopics2(key);
     var itemCount = (itemList != null) ? itemList.length : 0;
     return NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
@@ -66,7 +89,7 @@ class PopularTopicsListWidget extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return (index + 1 == itemCount)
                 ? loadMoreProgress(context)
-                : makeListTile(notifier.getPopularTopics()[index], context);
+                : makeListTile(notifier.getPopularTopics2(key)[index], context);
           },
         ));
   }

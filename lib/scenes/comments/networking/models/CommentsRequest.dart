@@ -11,7 +11,7 @@ class CommentsRequest {
 
   Future<List<Comment>> getComments(String url, int page) {
     return networkManager.sendRequest(APIConstants.API_COMMENTS,
-        {'url': url, 'page': page.toString()}).then((dynamic response) {
+        params: {'url': url, 'page': page.toString()}).then((dynamic response) {
       return Comments.fromJson(json.decode(response)).comments;
     });
   }

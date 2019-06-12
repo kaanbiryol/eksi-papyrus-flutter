@@ -15,8 +15,8 @@ class Networking {
     return _instance;
   }
 
-  Future<String> sendRequest(String apiPath, Map<String, String> params,
-      {TYPE type = TYPE.get}) async {
+  Future<String> sendRequest(String apiPath,
+      {Map<String, String> params = const {}, TYPE type = TYPE.get}) async {
     var requestUri = Uri.https(APIConstants.API_BASE_URL, apiPath, params);
     print(requestUri.toString());
     final response = await get(requestUri);
