@@ -1,6 +1,4 @@
-import 'package:eksi_papyrus/core/networking/Networking.dart';
 import 'package:flutter/foundation.dart';
-
 import 'networking/ChannelRequest.dart';
 import 'networking/models/Channel.dart';
 
@@ -9,7 +7,9 @@ class ChannelsNotifier with ChangeNotifier {
 
   ChannelsNotifier(this._channels);
 
-  List<Channel> getChannels() => _channels;
+  List<Channel> getChannels() {
+    return _channels;
+  }
 
   bool test = false;
 

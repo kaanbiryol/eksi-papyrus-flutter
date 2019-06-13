@@ -9,47 +9,33 @@ import 'PopularTopicsNotifier.dart';
 import 'networking/models/PopularTopic.dart';
 
 class PopularTopicsListWidget extends StatelessWidget {
-  PopularTopicsListWidget({Key key, this.channels}) : super(key: key);
+  PopularTopicsListWidget({Key key, this.channelUrl}) : super(key: key);
 
-  final List<Channel> channels;
+  final String channelUrl;
 
   @override
   Widget build(BuildContext context) {
-    var length = channels.length;
     print("REBUILT DefaultTabController");
-    return DefaultTabController(
-      initialIndex: 0,
-      length: length,
-      child: Scaffold(
-          backgroundColor: AppColors.background,
-          appBar: CenteredTitleAppBar(channelList: channels),
-          body: TabBarView(children: createPageWidgets(length, context))),
-    );
+    return decideWidget(context);
   }
 
-  List<Widget> createPageWidgets(int length, BuildContext context) {
+  Widget decideWidget(BuildContext context) {
     print("REBUILT createWidgets");
-    List<Widget> pageWidgets = [];
     final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
-
-    for (int i = 0; i < length; i++) {
-      if (notifier.hasTopicsInPage(i)) {
-        pageWidgets.add(makeListView(context, i.toString()));
-      } else {
-        pageWidgets.add(
-          makeFutureBuilder(context, channels[i].url, i.toString()),
-        );
-      }
+    if (notifier.hasTopicsInPage(key)) {
+      return makeListView(context);
+    } else {
+      return makeFutureBuilder(context);
     }
-    return pageWidgets;
   }
 
-  Widget makeFutureBuilder(BuildContext context, String url, String key) {
+  Widget makeFutureBuilder(BuildContext context) {
     print("REBUILT makeFutureBuilder");
+    ValueKey key = this.key;
     final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
     return FutureBuilder(
-      key: PageStorageKey<String>(key),
-      future: notifier.fetchTopics(url, key),
+      key: PageStorageKey<String>(key.value),
+      future: notifier.fetchTopics(channelUrl, key),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -57,7 +43,7 @@ class PopularTopicsListWidget extends StatelessWidget {
           case ConnectionState.active:
             return Center(child: CircularProgressIndicator());
           case ConnectionState.done:
-            return makeListView(context, key);
+            return makeListView(context);
         }
       },
     );
@@ -67,10 +53,10 @@ class PopularTopicsListWidget extends StatelessWidget {
     return Center(child: CircularProgressIndicator());
   }
 
-  Widget makeListView(BuildContext context, String key) {
+  Widget makeListView(BuildContext context) {
     final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
     print("REBUILT makeListView");
-    print(key);
+    var key = this.key;
     var itemList = notifier.getPopularTopics2(key);
     var itemCount = (itemList != null) ? itemList.length : 0;
     return NotificationListener<ScrollNotification>(
@@ -131,6 +117,6 @@ class PopularTopicsListWidget extends StatelessWidget {
   void loadMore(BuildContext context) {
     print("Load More");
     final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
-    notifier.setCurrentPage();
+    notifier.setCurrentPageFor(channelUrl, key);
   }
 }

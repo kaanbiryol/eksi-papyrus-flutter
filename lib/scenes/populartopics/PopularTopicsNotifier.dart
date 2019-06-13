@@ -1,21 +1,31 @@
-import 'package:eksi_papyrus/scenes/main/ChannelsNotifier.dart';
-import 'package:eksi_papyrus/scenes/main/networking/ChannelRequest.dart';
-import 'package:eksi_papyrus/scenes/main/networking/models/Channel.dart';
 import 'package:eksi_papyrus/scenes/populartopics/networking/models/PopularTopicsRequest.dart';
 import 'package:flutter/foundation.dart';
 
 import 'networking/models/PopularTopic.dart';
 
+class TopicList {
+  ValueKey key;
+  String url;
+  int page;
+  List<PopularTopic> topicList;
+
+  TopicList(this.key, this.url, this.page, this.topicList);
+
+  Future<List<PopularTopic>> fetchTopics() {
+    return TopicsRequest().getTopics(page, url);
+  }
+}
+
 class PopularTopicsNotifier with ChangeNotifier {
-  Map<String, List<PopularTopic>> topicsMap = {};
+  Map<String, TopicList> topicsMap = {};
   List<PopularTopic> _popularTopics = [];
   int _currentPage = 1;
 
   PopularTopicsNotifier(this._popularTopics);
 
-  void setCurrentPage() {
+  void setCurrentPageFor(String url, ValueKey key) {
     this._currentPage += 1;
-    fetchPopularTopics();
+    fetchTopics(url, key);
   }
 
   Future<List<PopularTopic>> fetchPopularTopics() {
@@ -27,21 +37,31 @@ class PopularTopicsNotifier with ChangeNotifier {
     });
   }
 
-  List<PopularTopic> getPopularTopics2(String key) {
-    return topicsMap[key];
+  List<PopularTopic> getPopularTopics2(ValueKey key) {
+    return topicsMap[key.value].topicList;
   }
 
-  bool hasTopicsInPage(int key) {
-    return topicsMap[generatePageKey(key)] != null;
+  List<PopularTopic> getPopularTopics(String key) {
+    return _popularTopics;
   }
 
-  String generatePageKey(int pageIndex) {
-    return pageIndex.toString();
+  bool hasTopicsInPage(ValueKey key) {
+    return topicsMap[generatePageKey(key.value)] != null;
   }
 
-  Future<List<PopularTopic>> fetchTopics(String url, String key) {
+  String generatePageKey(String pageIndex) {
+    return pageIndex;
+  }
+
+  Future<List<PopularTopic>> fetchTopics(String url, ValueKey key) {
     return TopicsRequest().getTopics(_currentPage, url).then((response) {
-      topicsMap[key] = response;
+      if (topicsMap.containsKey(key.value)) {
+        var topicList = topicsMap[key.value];
+        topicList.page += 1;
+        topicList.topicList.addAll(response);
+      } else {
+        topicsMap[key.value] = TopicList(key, url, 0, response);
+      }
       notifyListeners();
     });
   }
