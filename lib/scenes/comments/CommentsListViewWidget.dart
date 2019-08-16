@@ -1,5 +1,5 @@
 import 'package:eksi_papyrus/core/AppColors.dart';
-import 'package:eksi_papyrus/scenes/populartopics/networking/models/PopularTopic.dart';
+import 'package:eksi_papyrus/scenes/populartopics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -12,7 +12,7 @@ import 'networking/models/CommentsResponse.dart';
 class CommentsListViewWidget extends StatelessWidget {
   const CommentsListViewWidget({Key key, this.topic}) : super(key: key);
 
-  final PopularTopic topic;
+  final Topic topic;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +29,12 @@ class CommentsListViewWidget extends StatelessWidget {
       future: notifier.fetchComments(topic.url),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
-          case ConnectionState.none:
-          case ConnectionState.waiting:
           case ConnectionState.active:
             return Center(child: CircularProgressIndicator());
           case ConnectionState.done:
             return makeListViewHandler(context);
+          default:
+            return Column();
         }
       },
     );

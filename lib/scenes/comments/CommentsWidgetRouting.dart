@@ -1,7 +1,7 @@
-import 'package:eksi_papyrus/scenes/populartopics/networking/models/PopularTopic.dart';
+import 'package:eksi_papyrus/scenes/populartopics/networking/models/TopicsResponse.dart';
 
 class CommentsWidgetRouteArguments {
-  final PopularTopic topic;
+  final Topic topic;
   CommentsWidgetRouteArguments(this.topic);
 }
 

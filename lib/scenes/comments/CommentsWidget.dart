@@ -1,6 +1,5 @@
 import 'package:eksi_papyrus/core/AppColors.dart';
-import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
-import 'package:eksi_papyrus/scenes/populartopics/networking/models/PopularTopic.dart';
+import 'package:eksi_papyrus/scenes/populartopics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,7 @@ import 'CommentsNotifier.dart';
 class CommentsWidget extends StatelessWidget {
   const CommentsWidget({Key key, @required this.topic}) : super(key: key);
 
-  final PopularTopic topic;
+  final Topic topic;
 
   @override
   Widget build(BuildContext context) {

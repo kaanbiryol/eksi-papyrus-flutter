@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:eksi_papyrus/core/networking/APIConstants.dart';
 import 'package:eksi_papyrus/core/networking/Networking.dart';
 
-import 'models/Channel.dart';
 import 'models/Channels.dart';
 
 class ChannelsRequest {
@@ -14,7 +13,7 @@ class ChannelsRequest {
       APIConstants.API_CHANNELS,
     )
         .then((dynamic response) {
-      return Channels.fromJson(json.decode(response)).channels;
+      return ChannelsResponse.fromJson(json.decode(response)).channels;
     });
   }
 }

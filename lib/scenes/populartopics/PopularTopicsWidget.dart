@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'PopularTopicsNotifier.dart';
-import 'networking/models/PopularTopic.dart';
+import 'networking/models/TopicsResponse.dart';
 
 class PopularTopicsListWidget extends StatelessWidget {
   PopularTopicsListWidget({Key key, this.channelUrl}) : super(key: key);
@@ -78,7 +78,7 @@ class PopularTopicsListWidget extends StatelessWidget {
         ));
   }
 
-  ListTile makeListTile(PopularTopic topic, BuildContext context) {
+  ListTile makeListTile(Topic topic, BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
       leading: Container(

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'networking/ChannelRequest.dart';
-import 'networking/models/Channel.dart';
+import 'networking/models/Channels.dart';
 
 class ChannelsNotifier with ChangeNotifier {
   List<Channel> _channels = [];

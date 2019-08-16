@@ -1,24 +1,23 @@
-import 'package:eksi_papyrus/scenes/populartopics/networking/models/PopularTopicsRequest.dart';
 import 'package:flutter/foundation.dart';
-
-import 'networking/models/PopularTopic.dart';
+import 'networking/models/TopicsRequest.dart';
+import 'networking/models/TopicsResponse.dart';
 
 class TopicList {
   ValueKey key;
   String url;
   int page;
-  List<PopularTopic> topicList;
+  List<Topic> topicList;
 
   TopicList(this.key, this.url, this.page, this.topicList);
 
-  Future<List<PopularTopic>> fetchTopics() {
+  Future<TopicsResponse> fetchTopics() {
     return TopicsRequest().getTopics(page, url);
   }
 }
 
 class PopularTopicsNotifier with ChangeNotifier {
   Map<String, TopicList> topicsMap = {};
-  List<PopularTopic> _popularTopics = [];
+  List<Topic> _popularTopics = [];
   int _currentPage = 1;
 
   PopularTopicsNotifier(this._popularTopics);
@@ -28,20 +27,20 @@ class PopularTopicsNotifier with ChangeNotifier {
     fetchTopics(url, key);
   }
 
-  Future<List<PopularTopic>> fetchPopularTopics() {
+  Future<TopicsResponse> fetchPopularTopics() {
     return PopularTopicsRequest()
         .getPopularTopics(_currentPage)
         .then((response) {
-      _popularTopics.addAll(response);
+      _popularTopics.addAll(response.popularTopics);
       notifyListeners();
     });
   }
 
-  List<PopularTopic> getPopularTopics2(ValueKey key) {
+  List<Topic> getPopularTopics2(ValueKey key) {
     return topicsMap[key.value].topicList;
   }
 
-  List<PopularTopic> getPopularTopics(String key) {
+  List<Topic> getPopularTopics(String key) {
     return _popularTopics;
   }
 
@@ -53,16 +52,17 @@ class PopularTopicsNotifier with ChangeNotifier {
     return pageIndex;
   }
 
-  Future<List<PopularTopic>> fetchTopics(String url, ValueKey key) {
+  Future<TopicsResponse> fetchTopics(String url, ValueKey key) {
     return TopicsRequest().getTopics(_currentPage, url).then((response) {
       if (topicsMap.containsKey(key.value)) {
         var topicList = topicsMap[key.value];
         topicList.page += 1;
-        topicList.topicList.addAll(response);
+        topicList.topicList.addAll(response.popularTopics);
       } else {
-        topicsMap[key.value] = TopicList(key, url, 0, response);
+        topicsMap[key.value] = TopicList(key, url, 0, response.popularTopics);
       }
       notifyListeners();
+      return response;
     });
   }
 }

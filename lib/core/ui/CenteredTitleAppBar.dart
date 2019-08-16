@@ -1,6 +1,6 @@
 import 'package:eksi_papyrus/core/AppColors.dart';
 import 'package:eksi_papyrus/scenes/main/ChannelsNotifier.dart';
-import 'package:eksi_papyrus/scenes/main/networking/models/Channel.dart';
+import 'package:eksi_papyrus/scenes/main/networking/models/Channels.dart';
 import 'package:eksi_papyrus/scenes/populartopics/PopularTopicsWidget.dart';
 import 'package:eksi_papyrus/scenes/search/models/SearchResult.dart';
 import 'package:eksi_papyrus/scenes/search/models/SearchResultNotifier.dart';
@@ -71,7 +71,12 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
 
   Widget appBar(List<Channel> list) {
     return AppBar(
-      leading: IconButton(icon: Icon(Icons.search)),
+      leading: IconButton(
+        icon: Icon(Icons.settings),
+        onPressed: () {
+          //TODO: implement onpressed
+        },
+      ),
       title: Text("Papyrus"),
       centerTitle: true,
       backgroundColor: AppColors.background,
@@ -197,13 +202,14 @@ Widget makeFutureBuilder(BuildContext context) {
     future: notifier.queryResults("d"),
     builder: (BuildContext context, AsyncSnapshot snapshot) {
       switch (snapshot.connectionState) {
-        case ConnectionState.none:
-        case ConnectionState.waiting:
         case ConnectionState.active:
           return Center(child: CircularProgressIndicator());
         case ConnectionState.done:
           final searchResults = snapshot.data as SearchQueryResponse;
           return makeListView(context, searchResults);
+        default:
+          //TODO: is this the right way?
+          return Column();
       }
     },
   );

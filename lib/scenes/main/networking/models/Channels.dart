@@ -1,17 +1,32 @@
-import 'Channel.dart';
-
-class Channels {
+class ChannelsResponse {
   final List<Channel> channels;
 
-  Channels(this.channels);
+  ChannelsResponse(this.channels);
 
-  factory Channels.fromJson(Map<String, dynamic> json) {
+  factory ChannelsResponse.fromJson(Map<String, dynamic> json) {
     var list = json['channels'] as List;
+    print(list);
     List<Channel> channelList = list.map((i) => Channel.fromJson(i)).toList();
-    return Channels(channelList);
+    return ChannelsResponse(channelList);
   }
 
   Map<String, dynamic> toJson() => {
         'channels': channels,
+      };
+}
+
+class Channel {
+  final String title;
+  final String url;
+
+  Channel(this.title, this.url);
+
+  Channel.fromJson(Map<String, dynamic> json)
+      : title = json['title'],
+        url = json["url"];
+
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'url': url,
       };
 }
