@@ -1,12 +1,12 @@
-class SearchQueryResponse {
+class SearchResponse {
   final List<String> titles;
 
-  SearchQueryResponse(this.titles);
+  SearchResponse(this.titles);
 
-  factory SearchQueryResponse.fromJson(Map<String, dynamic> json) {
+  factory SearchResponse.fromJson(Map<String, dynamic> json) {
     var list = json['titles'] as List;
     List<String> searchResults = list.map((i) => i.toString()).toList();
-    return SearchQueryResponse(searchResults);
+    return SearchResponse(searchResults);
   }
 
   Map<String, dynamic> toJson() => {'titles': this.titles};

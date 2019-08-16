@@ -3,11 +3,11 @@ import 'package:flutter/foundation.dart';
 
 import 'networking/models/CommentsResponse.dart';
 
-class CommentsNotifier with ChangeNotifier {
+class CommentsBloc with ChangeNotifier {
   List<Comment> _commentList = [];
   int _currentPage = 1;
 
-  CommentsNotifier(this._commentList, this._currentPage) {
+  CommentsBloc(this._commentList, this._currentPage) {
     print("CREATED");
   }
 

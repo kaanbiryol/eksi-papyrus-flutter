@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
+import 'CommentsBloc.dart';
 import 'CommentsListViewWidget.dart';
-import 'CommentsNotifier.dart';
 
 class CommentsWidget extends StatelessWidget {
   const CommentsWidget({Key key, @required this.topic}) : super(key: key);
@@ -21,7 +21,7 @@ class CommentsWidget extends StatelessWidget {
         title: Text(topic.title));
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(builder: (_) => CommentsNotifier([], 1)),
+          ChangeNotifierProvider(builder: (_) => CommentsBloc([], 1)),
         ],
         child: Scaffold(
             backgroundColor: AppColors.background,

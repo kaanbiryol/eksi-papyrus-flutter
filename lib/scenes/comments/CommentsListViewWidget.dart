@@ -6,7 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'CommentsNotifier.dart';
+import 'CommentsBloc.dart';
 import 'networking/models/CommentsResponse.dart';
 
 class CommentsListViewWidget extends StatelessWidget {
@@ -24,9 +24,9 @@ class CommentsListViewWidget extends StatelessWidget {
 
   Widget makeFutureBuilder(BuildContext context) {
     print("FutureBuilder BUILT");
-    final notifier = Provider.of<CommentsNotifier>(context, listen: false);
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     return FutureBuilder(
-      future: notifier.fetchComments(topic.url),
+      future: commentsBloc.fetchComments(topic.url),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
@@ -46,10 +46,10 @@ class CommentsListViewWidget extends StatelessWidget {
 
   Widget makeListViewHandler(BuildContext context) {
     print("NotificationListener BUILT");
-    final notifier = Provider.of<CommentsNotifier>(context);
-    var itemList = notifier.getCommentList();
+    final commentsBloc = Provider.of<CommentsBloc>(context);
+    var itemList = commentsBloc.getCommentList();
     var itemCount =
-        (itemList != null) ? notifier.getCommentList().length + 1 : 0;
+        (itemList != null) ? commentsBloc.getCommentList().length + 1 : 0;
     return NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo is ScrollEndNotification &&
@@ -66,7 +66,7 @@ class CommentsListViewWidget extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return (index + 1 == itemCount)
                 ? loadMoreProgress(context)
-                : makeListTile(notifier.getCommentList()[index], context);
+                : makeListTile(commentsBloc.getCommentList()[index], context);
           },
         ));
   }
@@ -90,8 +90,7 @@ class CommentsListViewWidget extends StatelessWidget {
 
   void loadMore(BuildContext context) {
     print("Load More");
-    final commentsNotifier =
-        Provider.of<CommentsNotifier>(context, listen: false);
-    commentsNotifier.setCurrentPage(topic.url);
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    commentsBloc.setCurrentPage(topic.url);
   }
 }
