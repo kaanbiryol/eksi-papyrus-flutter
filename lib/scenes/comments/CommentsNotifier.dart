@@ -1,6 +1,7 @@
-import 'package:eksi_papyrus/scenes/comments/networking/models/Comment.dart';
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:flutter/foundation.dart';
+
+import 'networking/models/CommentsResponse.dart';
 
 class CommentsNotifier with ChangeNotifier {
   List<Comment> _commentList = [];

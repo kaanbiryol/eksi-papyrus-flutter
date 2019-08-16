@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'CommentsNotifier.dart';
-import 'networking/models/Comment.dart';
+import 'networking/models/CommentsResponse.dart';
 
 class CommentsListViewWidget extends StatelessWidget {
   const CommentsListViewWidget({Key key, this.topic}) : super(key: key);
@@ -60,8 +60,8 @@ class CommentsListViewWidget extends StatelessWidget {
         },
         child: ListView.separated(
           separatorBuilder: (context, index) => Divider(
-                color: AppColors.listDivider,
-              ),
+            color: AppColors.listDivider,
+          ),
           itemCount: itemCount,
           itemBuilder: (BuildContext context, int index) {
             return (index + 1 == itemCount)

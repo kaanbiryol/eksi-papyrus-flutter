@@ -1,24 +1,23 @@
-import 'dart:convert';
-
-import 'package:eksi_papyrus/core/networking/APIConstants.dart';
+import 'package:eksi_papyrus/core/AppColors.dart';
+import 'package:eksi_papyrus/core/AppStrings.dart';
 import 'package:eksi_papyrus/core/ui/CenteredTitleAppBar.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsNotifier.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidget.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:eksi_papyrus/scenes/main/ChannelsNotifier.dart';
-import 'package:eksi_papyrus/scenes/main/networking/ChannelRequest.dart';
-import 'package:eksi_papyrus/scenes/main/networking/models/Channel.dart';
 import 'package:eksi_papyrus/scenes/populartopics/PopularTopicsNotifier.dart';
-import 'package:eksi_papyrus/scenes/populartopics/PopularTopicsWidget.dart';
+import 'package:eksi_papyrus/scenes/search/models/SearchResultNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'core/networking/Networking.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  final theme = ThemeData(
+      primaryColor: AppColors.primaryColor,
+      accentColor: AppColors.accent,
+      backgroundColor: AppColors.background);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -27,10 +26,11 @@ class MyApp extends StatelessWidget {
             builder: (_) => PopularTopicsNotifier([]), key: UniqueKey()),
         ChangeNotifierProvider(builder: (_) => CommentsNotifier([], 1)),
         ChangeNotifierProvider(builder: (_) => ChannelsNotifier([])),
+        ChangeNotifierProvider(builder: (_) => SearchResultNotifier([])),
       ],
       child: new MaterialApp(
-        title: 'Flutter Demo',
-        theme: new ThemeData(primaryColor: Color.fromRGBO(58, 66, 86, 1.0)),
+        title: AppStrings.appName,
+        theme: theme,
         home: CenteredTitleAppBar(),
         onGenerateRoute: (settings) {
           print(settings.name);
@@ -53,23 +53,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// Widget makeFutureBuilder(BuildContext context) {
-//   return FutureBuilder(
-//     future: fetchChannels(),
-//     builder: (BuildContext context, AsyncSnapshot snapshot) {
-//       switch (snapshot.connectionState) {
-//         case ConnectionState.none:
-//         case ConnectionState.waiting:
-//         case ConnectionState.active:
-//           return Center(child: CircularProgressIndicator());
-//         case ConnectionState.done:
-//           return PopularTopicsListWidget(channels: snapshot.data);
-//       }
-//     },
-//   );
-// }
-
-// Future<List<Channel>> fetchChannels() {
-//   return ChannelsRequest().getChannels();
-// }

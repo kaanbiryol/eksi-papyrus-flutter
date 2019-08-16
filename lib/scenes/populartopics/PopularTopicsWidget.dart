@@ -1,7 +1,5 @@
 import 'package:eksi_papyrus/core/AppColors.dart';
-import 'package:eksi_papyrus/core/ui/CenteredTitleAppBar.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
-import 'package:eksi_papyrus/scenes/main/networking/models/Channel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -69,8 +67,8 @@ class PopularTopicsListWidget extends StatelessWidget {
         },
         child: ListView.separated(
           separatorBuilder: (context, index) => Divider(
-                color: AppColors.listDivider,
-              ),
+            color: AppColors.listDivider,
+          ),
           itemCount: itemCount,
           itemBuilder: (BuildContext context, int index) {
             return (index + 1 == itemCount)

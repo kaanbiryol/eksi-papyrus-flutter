@@ -5,4 +5,5 @@ class APIConstants {
   static const API_COMMENTS = API_VERSION + "comments";
   static const API_CHANNELS = API_VERSION + "channels";
   static const API_TOPICS = API_VERSION + "topics";
+  static const API_SEARCH = API_VERSION + "search";
 }

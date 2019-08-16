@@ -1,3 +1,19 @@
+class CommentsResponse {
+  final List<Comment> comments;
+
+  CommentsResponse(this.comments);
+
+  factory CommentsResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['comments'] as List;
+    List<Comment> commentList = list.map((i) => Comment.fromJson(i)).toList();
+    return CommentsResponse(commentList);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'comments': comments,
+      };
+}
+
 class Comment {
   final String comment;
   final String date;
