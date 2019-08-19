@@ -1,4 +1,3 @@
-import 'package:eksi_papyrus/core/AppColors.dart';
 import 'package:eksi_papyrus/core/AppStrings.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
@@ -48,7 +47,6 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
         TabController(vsync: this, length: channelsBloc.getChannels().length);
 
     return Scaffold(
-        backgroundColor: AppColors.background,
         appBar: appBar(channelsBloc.getChannels()),
         body: TabBarView(
             controller: _tabController, children: createPageWidgets(context)));
@@ -79,7 +77,6 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
       ),
       title: Text(AppStrings.appBarTitle),
       centerTitle: true,
-      backgroundColor: AppColors.background,
       bottom: tabsWidget(list),
       actions: <Widget>[
         IconButton(

@@ -66,9 +66,7 @@ class PopularTopicsListWidget extends StatelessWidget {
           }
         },
         child: ListView.separated(
-          separatorBuilder: (context, index) => Divider(
-            color: AppColors.listDivider,
-          ),
+          separatorBuilder: (context, index) => Divider(),
           itemCount: itemCount,
           itemBuilder: (BuildContext context, int index) {
             return (index + 1 == itemCount)

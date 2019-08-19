@@ -1,4 +1,3 @@
-import 'package:eksi_papyrus/core/AppColors.dart';
 import 'package:eksi_papyrus/scenes/populartopics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'CommentsBloc.dart';
+import 'CommentsWidgetRouting.dart';
 import 'networking/models/CommentsResponse.dart';
 
 class CommentsListViewWidget extends StatelessWidget {
@@ -24,9 +24,8 @@ class CommentsListViewWidget extends StatelessWidget {
 
   Widget makeFutureBuilder(BuildContext context) {
     print("FutureBuilder BUILT");
-    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     return FutureBuilder(
-      future: commentsBloc.fetchComments(topic.url),
+      future: buildCommentsFuture(context),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
@@ -38,6 +37,15 @@ class CommentsListViewWidget extends StatelessWidget {
         }
       },
     );
+  }
+
+  Future buildCommentsFuture(BuildContext context) {
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    if (topic.url == null || topic.url.isEmpty) {
+      return commentsBloc.fetchQueryResults(topic.title);
+    } else {
+      return commentsBloc.fetchComments(topic.url);
+    }
   }
 
   Widget loadMoreProgress(BuildContext context) {
@@ -59,9 +67,7 @@ class CommentsListViewWidget extends StatelessWidget {
           }
         },
         child: ListView.separated(
-          separatorBuilder: (context, index) => Divider(
-            color: AppColors.listDivider,
-          ),
+          separatorBuilder: (context, index) => Divider(),
           itemCount: itemCount,
           itemBuilder: (BuildContext context, int index) {
             return (index + 1 == itemCount)
@@ -82,7 +88,17 @@ class CommentsListViewWidget extends StatelessWidget {
                 .body1
                 .copyWith(fontSize: 14.0, color: Colors.white)),
         onTapLink: (url) {
-          launch(url);
+          print(url);
+          if (url.startsWith("/?q")) {
+            var topic = Topic(url, null, null);
+            Navigator.pushNamed(
+              context,
+              CommentsWidgetRouting.routeToComments,
+              arguments: CommentsWidgetRouteArguments(topic),
+            );
+          } else {
+            launch(url);
+          }
         },
       ),
     );

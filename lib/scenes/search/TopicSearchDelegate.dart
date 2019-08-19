@@ -1,4 +1,6 @@
 import 'package:eksi_papyrus/core/AppColors.dart';
+import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
+import 'package:eksi_papyrus/scenes/populartopics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,7 +10,17 @@ import 'networking/models/SearchResponse.dart';
 class TopicSearchDelegate extends SearchDelegate {
   @override
   ThemeData appBarTheme(BuildContext context) {
-    return Theme.of(context);
+    final ThemeData theme = Theme.of(context);
+    return theme.copyWith(
+        inputDecorationTheme: InputDecorationTheme(
+            hintStyle: TextStyle(color: theme.primaryTextTheme.title.color)),
+        primaryColor: theme.primaryColor,
+        primaryIconTheme: theme.primaryIconTheme,
+        primaryColorBrightness: theme.primaryColorBrightness,
+        primaryTextTheme: theme.primaryTextTheme,
+        textTheme: theme.textTheme.copyWith(
+            title: theme.textTheme.title
+                .copyWith(color: theme.primaryTextTheme.title.color)));
   }
 
   @override
@@ -111,11 +123,12 @@ ListTile makeListTile(String title, BuildContext context) {
           color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.0),
     ),
     onTap: () {
-      // Navigator.pushNamed(
-      //   context,
-      //   CommentsWidgetRouting.routeToComments,
-      //   arguments: CommentsWidgetRouteArguments(topic),
-      // );
+      var topic = Topic(title, "", null);
+      Navigator.pushNamed(
+        context,
+        CommentsWidgetRouting.routeToComments,
+        arguments: CommentsWidgetRouteArguments(topic),
+      );
     },
   );
 }

@@ -15,10 +15,7 @@ class CommentsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("CommentsWidget BUILT");
-    final topAppBar = AppBar(
-        elevation: 0.1,
-        backgroundColor: AppColors.accent,
-        title: Text(topic.title));
+    final topAppBar = AppBar(elevation: 0.1, title: Text(topic.title));
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(builder: (_) => CommentsBloc([], 1)),

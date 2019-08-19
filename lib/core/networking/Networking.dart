@@ -1,3 +1,6 @@
+import 'dart:core' as prefix0;
+import 'dart:core';
+
 import 'package:http/http.dart';
 
 import 'APIConstants.dart';
@@ -18,14 +21,17 @@ class Networking {
   Future<String> sendRequest(String apiPath,
       {Map<String, String> params = const {}, TYPE type = TYPE.get}) async {
     var requestUri = Uri.https(APIConstants.API_BASE_URL, apiPath, params);
+    print("-------------- REQUEST -----------");
     print(requestUri.toString());
     final response = await get(requestUri);
     // print(response.body);
     if (response.statusCode == 200) {
+      print("-------------- RESPONSE -----------");
+      print(response.body.toString());
       return response.body;
     } else {
       print("error");
-      //TODO handle errors here
+      //TODO handle errors heres1
       return "";
     }
   }

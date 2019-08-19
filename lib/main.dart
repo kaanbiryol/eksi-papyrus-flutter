@@ -16,7 +16,10 @@ class MyApp extends StatelessWidget {
   final theme = ThemeData(
       primaryColor: AppColors.primaryColor,
       accentColor: AppColors.accent,
-      backgroundColor: AppColors.background);
+      backgroundColor: AppColors.background,
+      scaffoldBackgroundColor: AppColors.background,
+      appBarTheme: AppBarTheme(color: AppColors.background),
+      dividerColor: AppColors.listDivider);
 
   @override
   Widget build(BuildContext context) {
