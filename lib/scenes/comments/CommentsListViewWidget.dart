@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:eksi_papyrus/scenes/populartopics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -41,7 +43,7 @@ class CommentsListViewWidget extends StatelessWidget {
 
   Future buildCommentsFuture(BuildContext context) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
-    if (topic.url == null || topic.url.isEmpty) {
+    if (topic.url.startsWith("/?q")) {
       return commentsBloc.fetchQueryResults(topic.title);
     } else {
       return commentsBloc.fetchComments(topic.url);
@@ -88,9 +90,11 @@ class CommentsListViewWidget extends StatelessWidget {
                 .body1
                 .copyWith(fontSize: 14.0, color: Colors.white)),
         onTapLink: (url) {
-          print(url);
           if (url.startsWith("/?q")) {
-            var topic = Topic(url, null, null);
+            var title =
+                Uri.decodeFull(url).replaceAll("/?q=", "").replaceAll("+", " ");
+            var queryUrl = Uri.decodeFull(url);
+            var topic = Topic(title, null, queryUrl);
             Navigator.pushNamed(
               context,
               CommentsWidgetRouting.routeToComments,
