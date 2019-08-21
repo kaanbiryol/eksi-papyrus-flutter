@@ -29,8 +29,9 @@ class CommentsBloc with ChangeNotifier {
         (_currentPage).toString() +
         "totalPages" +
         _pageCount.toString());
+    //TODO: why is _currentPage is set to 1?
     return CommentsRequest()
-        .getComments(url, _currentPage + 1)
+        .getComments(url, CommentType.today, _currentPage)
         .then((response) {
       _commentList.addAll(response.comments);
       _currentPage = int.parse(response.page);
