@@ -54,25 +54,40 @@ class CommentsListViewWidget extends StatelessWidget {
     return Center(child: CircularProgressIndicator());
   }
 
+  int calculateItemlistCount(List<Comment> commentList, bool canPaginate) {
+    if (commentList != null) {
+      if (canPaginate) {
+        return commentList.length + 1;
+      } else {
+        return commentList.length;
+      }
+    } else {
+      return 0;
+    }
+  }
+
   Widget makeListViewHandler(BuildContext context) {
     print("NotificationListener BUILT");
     final commentsBloc = Provider.of<CommentsBloc>(context);
     var itemList = commentsBloc.getCommentList();
-    var itemCount =
-        (itemList != null) ? commentsBloc.getCommentList().length + 1 : 0;
+    var canPaginate = commentsBloc.canPaginate();
+    var itemCount = calculateItemlistCount(itemList, canPaginate);
     return NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo is ScrollEndNotification &&
-              scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+              scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+              canPaginate) {
             print("SCROLL MAXED");
             loadMore(context);
+            return true;
           }
+          return false;
         },
         child: ListView.separated(
           separatorBuilder: (context, index) => Divider(),
           itemCount: itemCount,
           itemBuilder: (BuildContext context, int index) {
-            return (index + 1 == itemCount)
+            return (index + 1 == itemCount && canPaginate)
                 ? loadMoreProgress(context)
                 : makeListTile(commentsBloc.getCommentList()[index], context);
           },
@@ -111,6 +126,6 @@ class CommentsListViewWidget extends StatelessWidget {
   void loadMore(BuildContext context) {
     print("Load More");
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
-    commentsBloc.setCurrentPage(topic.url);
+    commentsBloc.fetchComments(topic.url);
   }
 }

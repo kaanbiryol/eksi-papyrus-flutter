@@ -1,12 +1,16 @@
 class CommentsResponse {
   final List<Comment> comments;
+  final String page;
+  final String pageCount;
 
-  CommentsResponse(this.comments);
+  CommentsResponse(this.comments, this.page, this.pageCount);
 
   factory CommentsResponse.fromJson(Map<String, dynamic> json) {
     var list = json['comments'] as List;
     List<Comment> commentList = list.map((i) => Comment.fromJson(i)).toList();
-    return CommentsResponse(commentList);
+    var page = json['page'];
+    var pageCount = json['pageCount'];
+    return CommentsResponse(commentList, page, pageCount);
   }
 
   Map<String, dynamic> toJson() => {

@@ -1,16 +1,16 @@
 class TopicsResponse {
-  final List<Topic> popularTopics;
+  final List<Topic> topics;
 
-  TopicsResponse(this.popularTopics);
+  TopicsResponse(this.topics);
 
   factory TopicsResponse.fromJson(Map<String, dynamic> json) {
-    var list = json['popularTopics'] as List;
+    var list = json['topics'] as List;
     List<Topic> topicList = list.map((i) => Topic.fromJson(i)).toList();
     return TopicsResponse(topicList);
   }
 
   Map<String, dynamic> toJson() => {
-        'popularTopics': popularTopics,
+        'topics': topics,
       };
 }
 

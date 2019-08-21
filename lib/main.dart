@@ -3,7 +3,7 @@ import 'package:eksi_papyrus/core/AppStrings.dart';
 import 'package:eksi_papyrus/core/ui/CenteredTitleAppBar.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsBloc.dart';
-import 'package:eksi_papyrus/scenes/populartopics/PopularTopicsNotifier.dart';
+import 'package:eksi_papyrus/scenes/populartopics/TopicsBloc.dart';
 import 'package:eksi_papyrus/scenes/search/networking/SearchResultBloc.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            builder: (_) => PopularTopicsNotifier([]), key: UniqueKey()),
+            builder: (_) => TopicsBloc([]), key: UniqueKey()),
         ChangeNotifierProvider(builder: (_) => CommentsBloc([], 1)),
         ChangeNotifierProvider(builder: (_) => ChannelsBloc([])),
         ChangeNotifierProvider(builder: (_) => SearchResultBloc([])),

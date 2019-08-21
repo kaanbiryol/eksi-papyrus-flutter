@@ -3,11 +3,11 @@ import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'PopularTopicsNotifier.dart';
+import 'TopicsBloc.dart';
 import 'networking/models/TopicsResponse.dart';
 
-class PopularTopicsListWidget extends StatelessWidget {
-  PopularTopicsListWidget({Key key, this.channelUrl}) : super(key: key);
+class TopicsListWidget extends StatelessWidget {
+  TopicsListWidget({Key key, this.channelUrl}) : super(key: key);
 
   final String channelUrl;
 
@@ -19,7 +19,7 @@ class PopularTopicsListWidget extends StatelessWidget {
 
   Widget decideWidget(BuildContext context) {
     print("REBUILT createWidgets");
-    final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
+    final notifier = Provider.of<TopicsBloc>(context, listen: false);
     if (notifier.hasTopicsInPage(key)) {
       return makeListView(context);
     } else {
@@ -30,7 +30,7 @@ class PopularTopicsListWidget extends StatelessWidget {
   Widget makeFutureBuilder(BuildContext context) {
     print("REBUILT makeFutureBuilder");
     ValueKey key = this.key;
-    final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
+    final notifier = Provider.of<TopicsBloc>(context, listen: false);
     return FutureBuilder(
       key: PageStorageKey<String>(key.value),
       future: notifier.fetchTopics(channelUrl, key),
@@ -52,7 +52,7 @@ class PopularTopicsListWidget extends StatelessWidget {
   }
 
   Widget makeListView(BuildContext context) {
-    final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
+    final notifier = Provider.of<TopicsBloc>(context, listen: false);
     print("REBUILT makeListView");
     var key = this.key;
     var itemList = notifier.getPopularTopics2(key);
@@ -112,7 +112,7 @@ class PopularTopicsListWidget extends StatelessWidget {
 
   void loadMore(BuildContext context) {
     print("Load More");
-    final notifier = Provider.of<PopularTopicsNotifier>(context, listen: false);
+    final notifier = Provider.of<TopicsBloc>(context, listen: false);
     notifier.setCurrentPageFor(channelUrl, key);
   }
 }

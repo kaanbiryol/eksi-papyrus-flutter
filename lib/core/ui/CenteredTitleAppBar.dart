@@ -1,7 +1,7 @@
 import 'package:eksi_papyrus/core/AppStrings.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
-import 'package:eksi_papyrus/scenes/populartopics/PopularTopicsWidget.dart';
+import 'package:eksi_papyrus/scenes/populartopics/TopicsListWidget.dart';
 import 'package:eksi_papyrus/scenes/search/TopicSearchDelegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -59,7 +59,7 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
 
     for (int i = 0; i < channelsBloc.getChannels().length; i++) {
       var item = channelsBloc.getChannels()[i];
-      pageWidgets.add(PopularTopicsListWidget(
+      pageWidgets.add(TopicsListWidget(
         key: ValueKey(item.title),
         channelUrl: item.url,
       ));

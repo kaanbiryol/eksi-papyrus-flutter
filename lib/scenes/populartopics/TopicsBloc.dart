@@ -15,12 +15,12 @@ class TopicList {
   }
 }
 
-class PopularTopicsNotifier with ChangeNotifier {
+class TopicsBloc with ChangeNotifier {
   Map<String, TopicList> topicsMap = {};
-  List<Topic> _popularTopics = [];
+  List<Topic> topics = [];
   int _currentPage = 1;
 
-  PopularTopicsNotifier(this._popularTopics);
+  TopicsBloc(this.topics);
 
   void setCurrentPageFor(String url, ValueKey key) {
     this._currentPage += 1;
@@ -31,8 +31,9 @@ class PopularTopicsNotifier with ChangeNotifier {
     return PopularTopicsRequest()
         .getPopularTopics(_currentPage)
         .then((response) {
-      _popularTopics.addAll(response.popularTopics);
+      topics.addAll(response.topics);
       notifyListeners();
+      return response;
     });
   }
 
@@ -41,7 +42,7 @@ class PopularTopicsNotifier with ChangeNotifier {
   }
 
   List<Topic> getPopularTopics(String key) {
-    return _popularTopics;
+    return topics;
   }
 
   bool hasTopicsInPage(ValueKey key) {
@@ -57,9 +58,9 @@ class PopularTopicsNotifier with ChangeNotifier {
       if (topicsMap.containsKey(key.value)) {
         var topicList = topicsMap[key.value];
         topicList.page += 1;
-        topicList.topicList.addAll(response.popularTopics);
+        topicList.topicList.addAll(response.topics);
       } else {
-        topicsMap[key.value] = TopicList(key, url, 0, response.popularTopics);
+        topicsMap[key.value] = TopicList(key, url, 0, response.topics);
       }
       notifyListeners();
       return response;
