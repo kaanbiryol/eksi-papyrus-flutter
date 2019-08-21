@@ -47,42 +47,21 @@ class TopicSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    if (query.length < 3) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Center(
-            child: Text(
-              "Search term must be longer than two letters.",
-            ),
-          )
-        ],
-      );
-    }
-
-    return Column(
-      children: <Widget>[
-        //Build the results based on the searchResults stream in the searchBloc
-        Text("test")
-      ],
-    );
+    return makeFutureBuilder(context, query);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // This method is called everytime the search term changes.
-    // If you want to add search suggestions as the user enters their search term, this is the place to do that.
-
-    return makeFutureBuilder(context);
+    return makeFutureBuilder(context, query);
   }
 }
 
-Widget makeFutureBuilder(BuildContext context) {
+Widget makeFutureBuilder(BuildContext context, String query) {
   print("FutureBuilder BUILT");
   final searchResultBloc =
       Provider.of<SearchResultBloc>(context, listen: false);
   return FutureBuilder(
-    future: searchResultBloc.queryResults("d"),
+    future: searchResultBloc.queryResults(query),
     builder: (BuildContext context, AsyncSnapshot snapshot) {
       switch (snapshot.connectionState) {
         case ConnectionState.active:
