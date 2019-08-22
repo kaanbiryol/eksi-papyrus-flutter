@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:eksi_papyrus/core/networking/APIConstants.dart';
 import 'package:eksi_papyrus/core/networking/Networking.dart';
-import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsResponse.dart';
 import 'package:eksi_papyrus/scenes/search/networking/models/QueryResponse.dart';
 
 class QueryRequest {

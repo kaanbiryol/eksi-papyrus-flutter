@@ -1,5 +1,6 @@
 import 'package:eksi_papyrus/core/AppColors.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
+import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,7 @@ class TopicsListWidget extends StatelessWidget {
     final notifier = Provider.of<TopicsBloc>(context, listen: false);
     return FutureBuilder(
       key: PageStorageKey<String>(key.value),
-      future: notifier.fetchTopics(channelUrl, key),
+      future: notifier.fetchTopics(channelUrl, key, CommentType.all),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:

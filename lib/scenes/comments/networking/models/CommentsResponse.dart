@@ -8,8 +8,8 @@ class CommentsResponse {
   factory CommentsResponse.fromJson(Map<String, dynamic> json) {
     var list = json['comments'] as List;
     List<Comment> commentList = list.map((i) => Comment.fromJson(i)).toList();
-    var page = json['page'];
-    var pageCount = json['pageCount'];
+    var page = json['page'].toString();
+    var pageCount = json['pageCount'].toString();
     return CommentsResponse(commentList, page, pageCount);
   }
 

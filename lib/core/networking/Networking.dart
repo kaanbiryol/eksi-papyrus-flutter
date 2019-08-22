@@ -1,6 +1,7 @@
 import 'dart:core' as prefix0;
 import 'dart:core';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import 'APIConstants.dart';
@@ -22,12 +23,12 @@ class Networking {
       {Map<String, String> params = const {}, TYPE type = TYPE.get}) async {
     var requestUri = Uri.https(APIConstants.API_BASE_URL, apiPath, params);
     print("-------------- REQUEST -----------");
-    print(requestUri.toString());
+    debugPrint(requestUri.toString());
     final response = await get(requestUri);
     // print(response.body);
     if (response.statusCode == 200) {
       print("-------------- RESPONSE -----------");
-      print(response.body.toString());
+      debugPrint(response.body.toString());
       return response.body;
     } else {
       print("error");

@@ -1,3 +1,4 @@
+import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:flutter/foundation.dart';
 import 'networking/models/TopicsRequest.dart';
 import 'networking/models/TopicsResponse.dart';
@@ -53,15 +54,24 @@ class TopicsBloc with ChangeNotifier {
     return pageIndex;
   }
 
-  Future<TopicsResponse> fetchTopics(String url, ValueKey key) {
+  Future<TopicsResponse> fetchTopics(
+      String url, ValueKey key, CommentType type) {
     return TopicsRequest().getTopics(_currentPage, url).then((response) {
+      print("KAAN" + response.topics.first.commentType.toString());
+
+      var topics = response.topics;
+      // .map((item) {
+      //   item.commentType = type;
+      // }).toList();
+
       if (topicsMap.containsKey(key.value)) {
         var topicList = topicsMap[key.value];
         topicList.page += 1;
-        topicList.topicList.addAll(response.topics);
+        topicList.topicList.addAll(topics);
       } else {
-        topicsMap[key.value] = TopicList(key, url, 0, response.topics);
+        topicsMap[key.value] = TopicList(key, url, 0, topics);
       }
+
       notifyListeners();
       return response;
     });

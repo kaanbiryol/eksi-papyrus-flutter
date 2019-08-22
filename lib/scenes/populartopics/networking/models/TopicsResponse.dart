@@ -1,3 +1,5 @@
+import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
+
 class TopicsResponse {
   final List<Topic> topics;
 
@@ -18,8 +20,10 @@ class Topic {
   final String title;
   final String numberOfComments;
   final String url;
+  CommentType commentType = CommentType.all;
 
-  Topic(this.title, this.numberOfComments, this.url);
+  Topic(this.title, this.numberOfComments, this.url,
+      {this.commentType = CommentType.all});
 
   Topic.fromJson(Map<String, dynamic> json)
       : title = json['title'],

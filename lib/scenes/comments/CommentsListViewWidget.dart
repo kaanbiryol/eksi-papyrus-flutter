@@ -41,10 +41,10 @@ class CommentsListViewWidget extends StatelessWidget {
 
   Future buildCommentsFuture(BuildContext context) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
-    if (topic.url.startsWith("/?q")) {
-      return commentsBloc.fetchQueryResults(topic.title);
+    if (topic.url == null || topic.url.isEmpty) {
+      return commentsBloc.fetchQueryResults(topic.title, topic.commentType);
     } else {
-      return commentsBloc.fetchComments(topic.url);
+      return commentsBloc.fetchComments(topic.url, topic.commentType);
     }
   }
 
@@ -124,6 +124,6 @@ class CommentsListViewWidget extends StatelessWidget {
   void loadMore(BuildContext context) {
     print("Load More");
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
-    commentsBloc.fetchComments(topic.url);
+    commentsBloc.fetchComments(topic.url, topic.commentType);
   }
 }
