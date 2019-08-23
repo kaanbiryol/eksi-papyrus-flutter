@@ -114,6 +114,6 @@ class TopicsListWidget extends StatelessWidget {
   void loadMore(BuildContext context) {
     print("Load More");
     final notifier = Provider.of<TopicsBloc>(context, listen: false);
-    notifier.setCurrentPageFor(channelUrl, key);
+    notifier.fetchTopics(channelUrl, key, CommentType.all);
   }
 }

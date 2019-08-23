@@ -2,13 +2,17 @@ import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.d
 
 class TopicsResponse {
   final List<Topic> topics;
+  final String currentPage;
+  final String pageCount;
 
-  TopicsResponse(this.topics);
+  TopicsResponse(this.topics, this.currentPage, this.pageCount);
 
   factory TopicsResponse.fromJson(Map<String, dynamic> json) {
     var list = json['topics'] as List;
+    var currentPage = json['page'].toString();
+    var pageCount = json['pageCount'].toString();
     List<Topic> topicList = list.map((i) => Topic.fromJson(i)).toList();
-    return TopicsResponse(topicList);
+    return TopicsResponse(topicList, currentPage, pageCount);
   }
 
   Map<String, dynamic> toJson() => {
