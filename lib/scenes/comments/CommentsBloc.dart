@@ -23,7 +23,14 @@ class CommentsBloc with ChangeNotifier {
     return _currentPage + 1 <= _pageCount;
   }
 
+  void increaseCurrentPage() {
+    if (_currentPage < _pageCount) {
+      _currentPage++;
+    }
+  }
+
   Future<CommentsResponse> fetchComments(String url, CommentType type) {
+    increaseCurrentPage();
     print("Trying to parse" +
         (_currentPage).toString() +
         "totalPages" +

@@ -3,8 +3,8 @@ import 'package:eksi_papyrus/core/AppStrings.dart';
 import 'package:eksi_papyrus/core/ui/CenteredTitleAppBar.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsBloc.dart';
-import 'package:eksi_papyrus/scenes/populartopics/TopicsBloc.dart';
 import 'package:eksi_papyrus/scenes/search/networking/SearchResultBloc.dart';
+import 'package:eksi_papyrus/scenes/topics/TopicsBloc.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

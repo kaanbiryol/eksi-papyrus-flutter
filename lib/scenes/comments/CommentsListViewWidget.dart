@@ -1,4 +1,4 @@
-import 'package:eksi_papyrus/scenes/populartopics/networking/models/TopicsResponse.dart';
+import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -10,9 +10,11 @@ import 'CommentsWidgetRouting.dart';
 import 'networking/models/CommentsResponse.dart';
 
 class CommentsListViewWidget extends StatelessWidget {
-  const CommentsListViewWidget({Key key, this.topic}) : super(key: key);
+  const CommentsListViewWidget({Key key, this.topic, this.isQuery})
+      : super(key: key);
 
   final Topic topic;
+  final bool isQuery;
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +43,11 @@ class CommentsListViewWidget extends StatelessWidget {
 
   Future buildCommentsFuture(BuildContext context) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
-    if (topic.url == null || topic.url.isEmpty) {
+    if (isQuery) {
+      print("isQuery");
       return commentsBloc.fetchQueryResults(topic.title, topic.commentType);
     } else {
+      print("isNotQuery");
       return commentsBloc.fetchComments(topic.url, topic.commentType);
     }
   }
@@ -103,15 +107,14 @@ class CommentsListViewWidget extends StatelessWidget {
                 .body1
                 .copyWith(fontSize: 14.0, color: Colors.white)),
         onTapLink: (url) {
+          print("KAAN" + url);
           if (url.startsWith("/?q")) {
-            var title =
-                Uri.decodeFull(url).replaceAll("/?q=", "").replaceAll("+", " ");
-            var queryUrl = Uri.decodeFull(url);
-            var topic = Topic(title, null, queryUrl);
+            var title = url.replaceAll("/?q=", "").replaceAll("+", " ");
+            var topic = Topic(title, null, url);
             Navigator.pushNamed(
               context,
               CommentsWidgetRouting.routeToComments,
-              arguments: CommentsWidgetRouteArguments(topic),
+              arguments: CommentsWidgetRouteArguments(topic, true),
             );
           } else {
             launch(url);

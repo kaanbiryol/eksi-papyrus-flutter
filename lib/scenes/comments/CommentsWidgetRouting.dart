@@ -1,8 +1,9 @@
-import 'package:eksi_papyrus/scenes/populartopics/networking/models/TopicsResponse.dart';
+import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 
 class CommentsWidgetRouteArguments {
   final Topic topic;
-  CommentsWidgetRouteArguments(this.topic);
+  bool isQuery = false;
+  CommentsWidgetRouteArguments(this.topic, this.isQuery);
 }
 
 class CommentsWidgetRouting {

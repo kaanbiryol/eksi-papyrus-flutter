@@ -105,7 +105,7 @@ class TopicsListWidget extends StatelessWidget {
         Navigator.pushNamed(
           context,
           CommentsWidgetRouting.routeToComments,
-          arguments: CommentsWidgetRouteArguments(topic),
+          arguments: CommentsWidgetRouteArguments(topic, false),
         );
       },
     );

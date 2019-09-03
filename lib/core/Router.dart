@@ -11,9 +11,7 @@ class Router {
         final CommentsWidgetRouteArguments args = settings.arguments;
         return MaterialPageRoute(
           builder: (context) {
-            return CommentsWidget(
-              topic: args.topic,
-            );
+            return CommentsWidget(topic: args.topic, isQuery: args.isQuery);
           },
         );
         break;

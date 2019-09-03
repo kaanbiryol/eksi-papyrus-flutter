@@ -1,8 +1,8 @@
 import 'package:eksi_papyrus/core/AppStrings.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
-import 'package:eksi_papyrus/scenes/populartopics/TopicsListWidget.dart';
 import 'package:eksi_papyrus/scenes/search/TopicSearchDelegate.dart';
+import 'package:eksi_papyrus/scenes/topics/TopicsListWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
