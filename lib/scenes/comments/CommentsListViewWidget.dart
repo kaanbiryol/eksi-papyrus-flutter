@@ -1,3 +1,4 @@
+import 'package:eksi_papyrus/scenes/comments/CommentsListTile.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -31,6 +32,8 @@ class CommentsListViewWidget extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.waiting:
             return Center(child: CircularProgressIndicator());
           case ConnectionState.done:
             return makeListViewHandler(context);
@@ -96,32 +99,33 @@ class CommentsListViewWidget extends StatelessWidget {
         ));
   }
 
-  ListTile makeListTile(Comment comment, BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-      title: MarkdownBody(
-        data: comment.comment,
-        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
-            p: Theme.of(context)
-                .textTheme
-                .body1
-                .copyWith(fontSize: 14.0, color: Colors.white)),
-        onTapLink: (url) {
-          print("KAAN" + url);
-          if (url.startsWith("/?q")) {
-            var title = url.replaceAll("/?q=", "").replaceAll("+", " ");
-            var topic = Topic(title, null, url);
-            Navigator.pushNamed(
-              context,
-              CommentsWidgetRouting.routeToComments,
-              arguments: CommentsWidgetRouteArguments(topic, true),
-            );
-          } else {
-            launch(url);
-          }
-        },
-      ),
-    );
+  CommentsListTile makeListTile(Comment comment, BuildContext context) {
+    return CommentsListTile(comment: comment);
+    // return ListTile(
+    //   contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+    //   title: MarkdownBody(
+    //     data: comment.comment,
+    //     styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+    //         p: Theme.of(context)
+    //             .textTheme
+    //             .body1
+    //             .copyWith(fontSize: 14.0, color: Colors.white)),
+    //     onTapLink: (url) {
+    //       print("KAAN" + url);
+    //       if (url.startsWith("/?q")) {
+    //         var title = url.replaceAll("/?q=", "").replaceAll("+", " ");
+    //         var topic = Topic(title, null, url);
+    //         Navigator.pushNamed(
+    //           context,
+    //           CommentsWidgetRouting.routeToComments,
+    //           arguments: CommentsWidgetRouteArguments(topic, true),
+    //         );
+    //       } else {
+    //         launch(url);
+    //       }
+    //     },
+    //   ),
+    // );
   }
 
   void loadMore(BuildContext context) {

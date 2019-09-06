@@ -7,11 +7,17 @@ import 'package:provider/provider.dart';
 import 'TopicsBloc.dart';
 import 'networking/models/TopicsResponse.dart';
 
-class TopicsListWidget extends StatelessWidget {
+class TopicsListWidget extends StatefulWidget {
   TopicsListWidget({Key key, this.channelUrl}) : super(key: key);
 
   final String channelUrl;
 
+  @override
+  _TopicsListWidgetState createState() => _TopicsListWidgetState();
+}
+
+class _TopicsListWidgetState extends State<TopicsListWidget>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     print("REBUILT DefaultTabController");
@@ -21,7 +27,7 @@ class TopicsListWidget extends StatelessWidget {
   Widget decideWidget(BuildContext context) {
     print("REBUILT createWidgets");
     final notifier = Provider.of<TopicsBloc>(context, listen: false);
-    if (notifier.hasTopicsInPage(key)) {
+    if (notifier.hasTopicsInPage(widget.key)) {
       return makeListView(context);
     } else {
       return makeFutureBuilder(context);
@@ -30,11 +36,11 @@ class TopicsListWidget extends StatelessWidget {
 
   Widget makeFutureBuilder(BuildContext context) {
     print("REBUILT makeFutureBuilder");
-    ValueKey key = this.key;
+    ValueKey key = widget.key;
     final notifier = Provider.of<TopicsBloc>(context, listen: false);
     return FutureBuilder(
       key: PageStorageKey<String>(key.value),
-      future: notifier.fetchTopics(channelUrl, key, CommentType.all),
+      future: notifier.fetchTopics(widget.channelUrl, key, CommentType.today),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -55,7 +61,7 @@ class TopicsListWidget extends StatelessWidget {
   Widget makeListView(BuildContext context) {
     final notifier = Provider.of<TopicsBloc>(context, listen: false);
     print("REBUILT makeListView");
-    var key = this.key;
+    var key = widget.key;
     var itemList = notifier.getPopularTopics2(key);
     var itemCount = (itemList != null) ? itemList.length : 0;
     return NotificationListener<ScrollNotification>(
@@ -114,6 +120,9 @@ class TopicsListWidget extends StatelessWidget {
   void loadMore(BuildContext context) {
     print("Load More");
     final notifier = Provider.of<TopicsBloc>(context, listen: false);
-    notifier.fetchTopics(channelUrl, key, CommentType.all);
+    notifier.fetchTopics(widget.channelUrl, widget.key, CommentType.today);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

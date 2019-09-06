@@ -27,8 +27,14 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
     super.initState();
     print("INİT STATE");
     final channelsBloc = Provider.of<ChannelsBloc>(context, listen: false);
-    _tabController =
-        TabController(vsync: this, length: channelsBloc.getChannels().length);
+    _tabController = TabController(vsync: this, length: 0);
+
+    if (channelsBloc.getChannels().isEmpty) {
+      channelsBloc.fetchChannels().then((channels) {
+        _tabController = TabController(
+            vsync: this, length: channelsBloc.getChannels().length);
+      });
+    }
   }
 
   @override
@@ -39,13 +45,8 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
 
   @override
   Widget build(BuildContext context) {
+    print("Built state");
     var channelsBloc = Provider.of<ChannelsBloc>(context);
-    if (channelsBloc.getChannels().isEmpty) {
-      channelsBloc.fetchChannels();
-    }
-    _tabController =
-        TabController(vsync: this, length: channelsBloc.getChannels().length);
-
     return Scaffold(
         appBar: appBar(channelsBloc.getChannels()),
         body: TabBarView(
@@ -53,10 +54,9 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
   }
 
   List<Widget> createPageWidgets(BuildContext context) {
-    print("REBUILT createWidgets");
+    print("REBUILT createPageWidgets");
     List<Widget> pageWidgets = [];
     final channelsBloc = Provider.of<ChannelsBloc>(context, listen: false);
-
     for (int i = 0; i < channelsBloc.getChannels().length; i++) {
       var item = channelsBloc.getChannels()[i];
       pageWidgets.add(TopicsListWidget(

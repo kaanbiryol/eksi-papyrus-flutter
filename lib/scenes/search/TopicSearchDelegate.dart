@@ -19,8 +19,7 @@ class TopicSearchDelegate extends SearchDelegate {
         primaryColorBrightness: theme.primaryColorBrightness,
         primaryTextTheme: theme.primaryTextTheme,
         textTheme: theme.textTheme.copyWith(
-            title: theme.textTheme.title
-                .copyWith(color: theme.primaryTextTheme.title.color)));
+            title: theme.textTheme.title.copyWith(color: Colors.red)));
   }
 
   @override
