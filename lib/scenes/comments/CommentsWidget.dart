@@ -1,9 +1,8 @@
-import 'package:eksi_papyrus/core/AppColors.dart';
+import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-
 import 'CommentsBloc.dart';
 import 'CommentsListViewWidget.dart';
 

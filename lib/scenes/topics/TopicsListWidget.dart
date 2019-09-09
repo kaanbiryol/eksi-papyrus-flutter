@@ -1,4 +1,4 @@
-import 'package:eksi_papyrus/core/AppColors.dart';
+import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:flutter/material.dart';

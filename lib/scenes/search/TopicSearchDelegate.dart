@@ -1,4 +1,4 @@
-import 'package:eksi_papyrus/core/AppColors.dart';
+import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
@@ -13,13 +13,14 @@ class TopicSearchDelegate extends SearchDelegate {
     final ThemeData theme = Theme.of(context);
     return theme.copyWith(
         inputDecorationTheme: InputDecorationTheme(
-            hintStyle: TextStyle(color: theme.primaryTextTheme.title.color)),
+            hintStyle: TextStyle(color: AppColors.secondaryTextColor)),
         primaryColor: theme.primaryColor,
         primaryIconTheme: theme.primaryIconTheme,
         primaryColorBrightness: theme.primaryColorBrightness,
         primaryTextTheme: theme.primaryTextTheme,
         textTheme: theme.textTheme.copyWith(
-            title: theme.textTheme.title.copyWith(color: Colors.red)));
+            title: theme.textTheme.title
+                .copyWith(color: AppColors.primaryTextColor)));
   }
 
   @override

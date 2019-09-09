@@ -1,4 +1,3 @@
-import 'package:eksi_papyrus/core/AppColors.dart';
 import 'package:eksi_papyrus/core/AppStrings.dart';
 import 'package:eksi_papyrus/core/ui/CenteredTitleAppBar.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/Router.dart';
+import 'core/styles/AppColors.dart';
 
 void main() => runApp(new MyApp());
 
