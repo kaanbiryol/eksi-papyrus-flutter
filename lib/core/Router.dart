@@ -1,5 +1,7 @@
 import 'package:eksi_papyrus/scenes/comments/CommentsWidget.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
+import 'package:eksi_papyrus/scenes/settings/SettingsRouting.dart';
+import 'package:eksi_papyrus/scenes/settings/SettingsWidget.dart';
 import 'package:flutter/material.dart';
 
 class Router {
@@ -14,7 +16,10 @@ class Router {
             return CommentsWidget(topic: args.topic, isQuery: args.isQuery);
           },
         );
-        break;
+      case SettingsRouting.routeToSettings:
+        return MaterialPageRoute(builder: (context) {
+          return SettingsWidget();
+        });
       default:
         //TODO remove this
         return MaterialPageRoute(

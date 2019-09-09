@@ -2,6 +2,7 @@ import 'package:eksi_papyrus/core/AppStrings.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
 import 'package:eksi_papyrus/scenes/search/TopicSearchDelegate.dart';
+import 'package:eksi_papyrus/scenes/settings/SettingsRouting.dart';
 import 'package:eksi_papyrus/scenes/topics/TopicsListWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -72,7 +73,10 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
       leading: IconButton(
         icon: Icon(Icons.settings),
         onPressed: () {
-          //TODO: implement onpressed
+          Navigator.pushNamed(
+            context,
+            SettingsRouting.routeToSettings,
+          );
         },
       ),
       title: Text(AppStrings.appBarTitle),

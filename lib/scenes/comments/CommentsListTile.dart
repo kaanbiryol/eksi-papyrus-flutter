@@ -1,4 +1,3 @@
-import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/core/utils/DateUtils.dart';
 import 'package:flutter/material.dart';

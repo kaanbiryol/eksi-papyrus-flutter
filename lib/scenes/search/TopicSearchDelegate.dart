@@ -66,6 +66,8 @@ Widget makeFutureBuilder(BuildContext context, String query) {
       switch (snapshot.connectionState) {
         case ConnectionState.active:
           return Center(child: CircularProgressIndicator());
+        case ConnectionState.waiting:
+          return Center(child: CircularProgressIndicator());
         case ConnectionState.done:
           final searchResults = snapshot.data as SearchResponse;
           return makeListView(context, searchResults);
