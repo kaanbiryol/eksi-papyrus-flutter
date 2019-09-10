@@ -1,10 +1,13 @@
 import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/core/utils/DateUtils.dart';
+import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import 'CommentsWidgetRouting.dart';
 import 'networking/models/CommentsResponse.dart';
 
 class CommentsListTile extends StatelessWidget {
@@ -40,7 +43,20 @@ class CommentsListTile extends StatelessWidget {
               styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
                   .copyWith(
                       p: TextStyles.commentContent,
-                      a: TextStyles.commentAccent)),
+                      a: TextStyles.commentAccent),
+              onTapLink: (url) {
+                if (url.startsWith("/?q")) {
+                  var title = url.replaceAll("/?q=", "").replaceAll("+", " ");
+                  var topic = Topic(title, null, url);
+                  Navigator.pushNamed(
+                    context,
+                    CommentsWidgetRouting.routeToComments,
+                    arguments: CommentsWidgetRouteArguments(topic, true),
+                  );
+                } else {
+                  launch(url);
+                }
+              }),
         ],
       ),
     );
