@@ -1,12 +1,12 @@
-import 'dart:convert';
-
 import 'package:eksi_papyrus/core/styles/AppColors.dart';
-import 'package:eksi_papyrus/core/styles/SharedPreferencesHelper.dart';
-import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
-import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
+import 'package:eksi_papyrus/core/styles/AppThemes.dart';
+import 'package:eksi_papyrus/core/styles/TextStyles.dart';
+import 'package:eksi_papyrus/core/utils/ThemeUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+
+import 'ChannelChipWidget.dart';
 
 class SettingsWidget extends StatelessWidget {
   const SettingsWidget({Key key}) : super(key: key);
@@ -14,87 +14,25 @@ class SettingsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topAppBar = AppBar(elevation: 0.1, title: Text("Settings"));
+    final theme = Provider.of<ThemeBloc>(context);
     return MultiProvider(
         providers: [],
         child: Scaffold(
             backgroundColor: AppColors.background,
             appBar: topAppBar,
-            body: ChannelChip()));
-  }
-}
-
-class ChannelChip extends StatefulWidget {
-  @override
-  State createState() => ChannelChipState();
-}
-
-class ChannelChipState extends State<ChannelChip> {
-  List<Channel> userChannels = <Channel>[];
-  List<Channel> allChannels = <Channel>[];
-
-  @override
-  Widget build(BuildContext context) {
-    final channelsBloc = Provider.of<ChannelsBloc>(context, listen: false);
-    allChannels = channelsBloc.getChannels();
-    return FutureBuilder(
-        future: SharedPreferencesHelper.getUserChannels(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              userChannels = snapshot.data;
-              print("USER Channels " + userChannels.toString());
-              return chipWidget(context);
-            default:
-              return Text("KAAN");
-          }
-        });
-  }
-
-  Widget chipWidget(BuildContext context) {
-    return Container(
-      height: 200,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: SingleChildScrollView(
-          child: Wrap(
-              spacing: 8,
-              verticalDirection: VerticalDirection.down,
-              direction: Axis.horizontal,
-              runAlignment: WrapAlignment.center,
-              children: List.generate(
-                allChannels.length,
-                (index) {
-                  Channel channel = allChannels[index];
-                  return FilterChip(
-                    label: Text(channel.title),
-                    selected: test(channel),
-                    onSelected: (bool value) {
-                      setState(() {
-                        if (value) {
-                          userChannels.add(channel);
-                        } else {
-                          userChannels.removeWhere((Channel selectedChannel) {
-                            return selectedChannel.title == channel.title;
-                          });
-                        }
-                        SharedPreferencesHelper.setUserChannels(userChannels);
-                      });
-                    },
-                  );
+            body: ListView(children: <Widget>[
+              SwitchListTile(
+                value: theme.isDarkTheme(),
+                title: Text(
+                  "Dark Theme",
+                  style: TextStyles.commentContent,
+                ),
+                onChanged: (bool value) {
+                  final theme = Provider.of<ThemeBloc>(context);
+                  theme.setTheme(value ? ThemeType.DARK : ThemeType.LIGHT);
                 },
-              )),
-        ),
-      ),
-    );
-  }
-
-//TODO: rename and fix animation bug
-  bool test(Channel channel) {
-    for (var test in userChannels) {
-      if (test.title == channel.title) {
-        return true;
-      }
-    }
-    return false;
+              ),
+              ChannelChipWidget()
+            ])));
   }
 }

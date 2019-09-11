@@ -1,4 +1,3 @@
-import 'dart:core' as prefix0;
 import 'dart:core';
 
 import 'package:flutter/foundation.dart';

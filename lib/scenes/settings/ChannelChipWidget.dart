@@ -1,0 +1,82 @@
+import 'package:eksi_papyrus/core/utils/SharedPreferencesUtils.dart';
+import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
+import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+
+class ChannelChipWidget extends StatefulWidget {
+  @override
+  State createState() => ChannelChipWidgetState();
+}
+
+class ChannelChipWidgetState extends State<ChannelChipWidget> {
+  List<Channel> userChannels = <Channel>[];
+  List<Channel> allChannels = <Channel>[];
+
+  @override
+  Widget build(BuildContext context) {
+    final channelsBloc = Provider.of<ChannelsBloc>(context, listen: false);
+    allChannels = channelsBloc.getChannels();
+    return FutureBuilder(
+        future: SharedPreferencesUtils.getUserChannels(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              userChannels = snapshot.data;
+              print("USER Channels " + userChannels.toString());
+              return chipWidget(context);
+            default:
+              return Text("KAAN");
+          }
+        });
+  }
+
+  Widget chipWidget(BuildContext context) {
+    return Container(
+      height: 200,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: SingleChildScrollView(
+          child: Wrap(
+              spacing: 8,
+              verticalDirection: VerticalDirection.down,
+              direction: Axis.horizontal,
+              runAlignment: WrapAlignment.center,
+              children: List.generate(
+                allChannels.length,
+                (index) {
+                  Channel channel = allChannels[index];
+                  return FilterChip(
+                    label: Text(channel.title),
+                    selected: isUserChannel(channel),
+                    onSelected: (bool value) {
+                      setState(() {
+                        if (value) {
+                          userChannels.add(channel);
+                        } else {
+                          userChannels.removeWhere((Channel selectedChannel) {
+                            return selectedChannel.title == channel.title;
+                          });
+                        }
+                        SharedPreferencesUtils.setUserChannels(userChannels);
+                      });
+                    },
+                  );
+                },
+              )),
+        ),
+      ),
+    );
+  }
+
+  //TODO: fix animation bug
+  bool isUserChannel(Channel channel) {
+    for (var userChannel in userChannels) {
+      if (userChannel.title == channel.title) {
+        return true;
+      }
+    }
+    return false;
+  }
+}

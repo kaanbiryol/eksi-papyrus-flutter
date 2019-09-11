@@ -45,6 +45,7 @@ class CommentsListTile extends StatelessWidget {
                       p: TextStyles.commentContent,
                       a: TextStyles.commentAccent),
               onTapLink: (url) {
+                print("mUrl" + url);
                 if (url.startsWith("/?q")) {
                   var title = url.replaceAll("/?q=", "").replaceAll("+", " ");
                   var topic = Topic(title, null, url);
