@@ -1,3 +1,4 @@
+import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/core/utils/DateUtils.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'CommentsWidgetRouting.dart';
@@ -30,7 +32,7 @@ class CommentsListTile extends StatelessWidget {
       padding:
           const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
       child: new Wrap(
-        runSpacing: 8,
+        runSpacing: 0,
         children: <Widget>[
           new Text(
             comment.ownerUsername +
@@ -58,6 +60,44 @@ class CommentsListTile extends StatelessWidget {
                   launch(url);
                 }
               }),
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Wrap(
+                alignment: WrapAlignment.start,
+                runSpacing: 16.0,
+                spacing: 16.0,
+                direction: Axis.horizontal,
+                children: <Widget>[
+                  SizedBox(
+                    height: 16.0,
+                    width: 16.0,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      color: AppColors.accent,
+                      iconSize: 16,
+                      icon: new Icon(Icons.share),
+                      onPressed: () {
+                        Share.share(comment.commentUrl);
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.0,
+                    width: 16.0,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      iconSize: 16,
+                      icon: Icon(Icons.favorite),
+                      color: AppColors.accent,
+                      onPressed: () {},
+                    ),
+                  )
+                ],
+              )
+            ],
+          )
         ],
       ),
     );
