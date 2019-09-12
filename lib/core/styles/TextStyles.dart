@@ -3,6 +3,21 @@ import 'package:flutter/widgets.dart';
 import 'AppColors.dart';
 
 class TextStyles {
+  static TextStyle get darkTitle => TextStyle(
+      color: AppColors.dark_primaryTextColor,
+      fontWeight: FontWeight.normal,
+      fontSize: 15.0);
+
+  static TextStyle get lightTitle => TextStyle(
+      color: AppColors.primaryTextColor,
+      fontWeight: FontWeight.normal,
+      fontSize: 15.0);
+
+  static TextStyle get topicTitle => TextStyle(
+      color: AppColors.primaryTextColor,
+      fontWeight: FontWeight.normal,
+      fontSize: 16.0);
+
   static TextStyle get commentDetails => TextStyle(
       color: AppColors.secondaryTextColor,
       fontFamily: "Noto",
@@ -12,7 +27,7 @@ class TextStyles {
   static TextStyle get commentContent => TextStyle(
       color: AppColors.primaryTextColor,
       fontFamily: "Noto",
-      height: 0.9,
+      height: 1.2,
       fontWeight: FontWeight.normal,
       fontSize: 14.0);
 

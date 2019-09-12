@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,6 +23,13 @@ class CommentsListTile extends StatelessWidget {
     return new GestureDetector(
       child: listTile(context),
       onLongPress: () {
+        //TODO: find the equivalent ux in ios
+        Fluttertoast.showToast(
+            msg: "Entry copied to clipboard.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            fontSize: 16.0);
         Clipboard.setData(new ClipboardData(text: comment.comment));
       },
     );
@@ -40,26 +48,29 @@ class CommentsListTile extends StatelessWidget {
                 DateUtils.timeAgoSinceDate(comment.date),
             style: TextStyles.commentDetails,
           ),
-          new MarkdownBody(
-              data: comment.comment,
-              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
-                  .copyWith(
-                      p: TextStyles.commentContent,
-                      a: TextStyles.commentAccent),
-              onTapLink: (url) {
-                print("mUrl" + url);
-                if (url.startsWith("/?q")) {
-                  var title = url.replaceAll("/?q=", "").replaceAll("+", " ");
-                  var topic = Topic(title, null, url);
-                  Navigator.pushNamed(
-                    context,
-                    CommentsWidgetRouting.routeToComments,
-                    arguments: CommentsWidgetRouteArguments(topic, true),
-                  );
-                } else {
-                  launch(url);
-                }
-              }),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 3.0),
+            child: new MarkdownBody(
+                data: comment.comment,
+                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                    .copyWith(
+                        p: TextStyles.commentContent,
+                        a: TextStyles.commentAccent),
+                onTapLink: (url) {
+                  print("mUrl" + url);
+                  if (url.startsWith("/?q")) {
+                    var title = url.replaceAll("/?q=", "").replaceAll("+", " ");
+                    var topic = Topic(title, null, url);
+                    Navigator.pushNamed(
+                      context,
+                      CommentsWidgetRouting.routeToComments,
+                      arguments: CommentsWidgetRouteArguments(topic, true),
+                    );
+                  } else {
+                    launch(url);
+                  }
+                }),
+          ),
           new Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,7 +86,7 @@ class CommentsListTile extends StatelessWidget {
                     width: 16.0,
                     child: IconButton(
                       padding: EdgeInsets.zero,
-                      color: AppColors.accent,
+                      color: Theme.of(context).accentColor,
                       iconSize: 16,
                       icon: new Icon(Icons.share),
                       onPressed: () {
@@ -90,7 +101,7 @@ class CommentsListTile extends StatelessWidget {
                       padding: EdgeInsets.zero,
                       iconSize: 16,
                       icon: Icon(Icons.favorite),
-                      color: AppColors.accent,
+                      color: Theme.of(context).accentColor,
                       onPressed: () {},
                     ),
                   )

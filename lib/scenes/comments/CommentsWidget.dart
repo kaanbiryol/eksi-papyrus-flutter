@@ -22,7 +22,7 @@ class CommentsWidget extends StatelessWidget {
           ChangeNotifierProvider(builder: (_) => CommentsBloc([], 1)),
         ],
         child: Scaffold(
-            backgroundColor: AppColors.background,
+            backgroundColor: Theme.of(context).backgroundColor,
             appBar: topAppBar,
             body: CommentsListViewWidget(topic: topic, isQuery: isQuery)));
   }

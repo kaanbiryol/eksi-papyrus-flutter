@@ -47,12 +47,12 @@ class TopicSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return makeFutureBuilder(context, query);
+    return query.length >= 2 ? makeFutureBuilder(context, query) : Container();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return makeFutureBuilder(context, query);
+    return query.length >= 2 ? makeFutureBuilder(context, query) : Container();
   }
 }
 
@@ -84,7 +84,7 @@ Widget makeListView(BuildContext context, SearchResponse response) {
   var itemCount = (itemList != null) ? itemList.length : 0;
   return ListView.separated(
     separatorBuilder: (context, index) => Divider(
-      color: AppColors.listDivider,
+      color: Theme.of(context).dividerColor,
     ),
     itemCount: itemCount,
     itemBuilder: (BuildContext context, int index) {

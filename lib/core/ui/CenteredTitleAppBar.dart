@@ -1,4 +1,5 @@
 import 'package:eksi_papyrus/core/AppStrings.dart';
+import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
 import 'package:eksi_papyrus/scenes/search/TopicSearchDelegate.dart';
@@ -27,15 +28,6 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
   void initState() {
     super.initState();
     print("INİT STATE");
-    final channelsBloc = Provider.of<ChannelsBloc>(context, listen: false);
-    _tabController = TabController(vsync: this, length: 0);
-
-    if (channelsBloc.getChannels().isEmpty) {
-      channelsBloc.fetchChannels().then((channels) {
-        _tabController = TabController(
-            vsync: this, length: channelsBloc.getChannels().length);
-      });
-    }
   }
 
   @override
@@ -47,9 +39,16 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
   @override
   Widget build(BuildContext context) {
     print("Built state");
-    var channelsBloc = Provider.of<ChannelsBloc>(context);
+    //TODO: might move this to init state?
+    var channelsBloc = Provider.of<ChannelsBloc>(context, listen: true);
+    var userChannels = channelsBloc.getUserChannels();
+    _tabController = TabController(
+        vsync: this, length: channelsBloc.getUserChannels().length);
+    if (userChannels.isEmpty) {
+      channelsBloc.fetchUserChannels();
+    }
     return Scaffold(
-        appBar: appBar(channelsBloc.getChannels()),
+        appBar: appBar(channelsBloc.getUserChannels()),
         body: TabBarView(
             controller: _tabController, children: createPageWidgets(context)));
   }
@@ -58,8 +57,8 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
     print("REBUILT createPageWidgets");
     List<Widget> pageWidgets = [];
     final channelsBloc = Provider.of<ChannelsBloc>(context, listen: false);
-    for (int i = 0; i < channelsBloc.getChannels().length; i++) {
-      var item = channelsBloc.getChannels()[i];
+    for (int i = 0; i < channelsBloc.getUserChannels().length; i++) {
+      var item = channelsBloc.getUserChannels()[i];
       pageWidgets.add(TopicsListWidget(
         key: ValueKey(item.title),
         channelUrl: item.url,
@@ -107,17 +106,23 @@ class CustomCrossFade extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedCrossFade(
-      firstChild: new Container(
-        child: new TabBar(
-          controller: tabController,
-          isScrollable: true,
-          tabs: buildTabs(),
-        ),
-      ),
-      secondChild: new Container(),
-      crossFadeState: CrossFadeState.showFirst,
-      duration: const Duration(milliseconds: 300),
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 240),
+      height: channelList.isEmpty ? 4 : 40,
+      child: channelList.isEmpty
+          ? AppBarLinearProgressIndicator()
+          : AnimatedCrossFade(
+              firstChild: new Container(
+                child: new TabBar(
+                  controller: tabController,
+                  isScrollable: true,
+                  tabs: buildTabs(),
+                ),
+              ),
+              secondChild: new Container(),
+              crossFadeState: CrossFadeState.showFirst,
+              duration: const Duration(milliseconds: 300),
+            ),
     );
   }
 
@@ -134,4 +139,24 @@ class CustomCrossFade extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => new Size.fromHeight(40);
+}
+
+class AppBarLinearProgressIndicator extends StatelessWidget
+    implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      child: LinearProgressIndicator(
+        backgroundColor: Theme.of(context).backgroundColor,
+        valueColor: AlwaysStoppedAnimation<Color>(
+          AppColors.accent,
+        ),
+        value: null,
+      ),
+      duration: Duration(seconds: 2),
+    );
+  }
+
+  @override
+  Size get preferredSize => new Size.fromHeight(4);
 }

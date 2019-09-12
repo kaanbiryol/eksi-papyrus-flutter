@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:eksi_papyrus/core/utils/SharedPreferencesUtils.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
@@ -13,13 +14,13 @@ class ChannelChipWidget extends StatefulWidget {
 class ChannelChipWidgetState extends State<ChannelChipWidget> {
   List<Channel> userChannels = <Channel>[];
   List<Channel> allChannels = <Channel>[];
-
+  final userChannelsMemoizer = new AsyncMemoizer();
   @override
   Widget build(BuildContext context) {
     final channelsBloc = Provider.of<ChannelsBloc>(context, listen: false);
     allChannels = channelsBloc.getChannels();
     return FutureBuilder(
-        future: SharedPreferencesUtils.getUserChannels(),
+        future: _fetchData(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
@@ -30,6 +31,12 @@ class ChannelChipWidgetState extends State<ChannelChipWidget> {
               return Text("KAAN");
           }
         });
+  }
+
+  _fetchData() {
+    return userChannelsMemoizer.runOnce(() async {
+      return SharedPreferencesUtils.getUserChannels();
+    });
   }
 
   Widget chipWidget(BuildContext context) {
@@ -59,7 +66,9 @@ class ChannelChipWidgetState extends State<ChannelChipWidget> {
                             return selectedChannel.title == channel.title;
                           });
                         }
-                        SharedPreferencesUtils.setUserChannels(userChannels);
+                        final channelsBloc =
+                            Provider.of<ChannelsBloc>(context, listen: false);
+                        channelsBloc.updateUserChannels(userChannels);
                       });
                     },
                   );
@@ -70,7 +79,6 @@ class ChannelChipWidgetState extends State<ChannelChipWidget> {
     );
   }
 
-  //TODO: fix animation bug
   bool isUserChannel(Channel channel) {
     for (var userChannel in userChannels) {
       if (userChannel.title == channel.title) {

@@ -18,7 +18,7 @@ class SettingsWidget extends StatelessWidget {
     return MultiProvider(
         providers: [],
         child: Scaffold(
-            backgroundColor: AppColors.background,
+            backgroundColor: Theme.of(context).backgroundColor,
             appBar: topAppBar,
             body: ListView(children: <Widget>[
               SwitchListTile(

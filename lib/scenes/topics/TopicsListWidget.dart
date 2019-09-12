@@ -1,4 +1,5 @@
 import 'package:eksi_papyrus/core/styles/AppColors.dart';
+import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:flutter/material.dart';
@@ -100,13 +101,10 @@ class _TopicsListWidgetState extends State<TopicsListWidget>
                 fontWeight: FontWeight.bold,
                 fontSize: 13.0)),
       ),
-      title: Text(
-        topic.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-            color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.0),
-      ),
+      title: Text(topic.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.title),
       onTap: () {
         Navigator.pushNamed(
           context,
