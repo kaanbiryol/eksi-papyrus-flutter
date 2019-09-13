@@ -6,6 +6,7 @@ import 'package:eksi_papyrus/scenes/comments/CommentsBloc.dart';
 import 'package:eksi_papyrus/scenes/search/networking/SearchResultBloc.dart';
 import 'package:eksi_papyrus/scenes/topics/TopicsBloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'core/Router.dart';
 import 'core/utils/SharedPreferencesUtils.dart';
@@ -48,6 +49,10 @@ class ThemedMaterialApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeBloc>(context);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      systemNavigationBarColor: theme.getTheme().primaryColor,
+      statusBarColor: theme.getTheme().primaryColor,
+    ));
     return new MaterialApp(
       title: AppStrings.appName,
       theme: theme.getTheme(),

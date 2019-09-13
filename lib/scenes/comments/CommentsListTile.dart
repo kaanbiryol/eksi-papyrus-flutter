@@ -1,4 +1,3 @@
-import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/core/utils/DateUtils.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
@@ -46,7 +45,7 @@ class CommentsListTile extends StatelessWidget {
             comment.ownerUsername +
                 " - " +
                 DateUtils.timeAgoSinceDate(comment.date),
-            style: TextStyles.commentDetails,
+            style: Theme.of(context).textTheme.subtitle,
           ),
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 3.0),
@@ -54,7 +53,7 @@ class CommentsListTile extends StatelessWidget {
                 data: comment.comment,
                 styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
                     .copyWith(
-                        p: TextStyles.commentContent,
+                        p: Theme.of(context).textTheme.body1,
                         a: TextStyles.commentAccent),
                 onTapLink: (url) {
                   print("mUrl" + url);
@@ -86,7 +85,7 @@ class CommentsListTile extends StatelessWidget {
                     width: 16.0,
                     child: IconButton(
                       padding: EdgeInsets.zero,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).accentIconTheme.color,
                       iconSize: 16,
                       icon: new Icon(Icons.share),
                       onPressed: () {
@@ -101,7 +100,7 @@ class CommentsListTile extends StatelessWidget {
                       padding: EdgeInsets.zero,
                       iconSize: 16,
                       icon: Icon(Icons.favorite),
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).accentIconTheme.color,
                       onPressed: () {},
                     ),
                   )

@@ -1,5 +1,3 @@
-import 'package:eksi_papyrus/core/styles/AppColors.dart';
-import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +89,7 @@ class _TopicsListWidgetState extends State<TopicsListWidget>
         width: 50,
         padding: EdgeInsets.all(12.0),
         decoration: new BoxDecoration(
-          color: AppColors.accent,
+          color: Theme.of(context).accentColor,
           borderRadius: new BorderRadius.all(new Radius.circular(4.0)),
         ),
         child: Text(topic.numberOfComments,

@@ -1,8 +1,8 @@
-import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/core/styles/AppThemes.dart';
 import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/core/utils/ThemeUtils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +30,10 @@ class SettingsWidget extends StatelessWidget {
                 onChanged: (bool value) {
                   final theme = Provider.of<ThemeBloc>(context);
                   theme.setTheme(value ? ThemeType.DARK : ThemeType.LIGHT);
+                  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                    systemNavigationBarColor: theme.getTheme().primaryColor,
+                    statusBarColor: theme.getTheme().primaryColor,
+                  ));
                 },
               ),
               ChannelChipWidget()

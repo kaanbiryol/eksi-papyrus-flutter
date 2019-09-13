@@ -3,7 +3,6 @@ import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'networking/SearchResultBloc.dart';
 import 'networking/models/SearchResponse.dart';
 
@@ -96,13 +95,10 @@ Widget makeListView(BuildContext context, SearchResponse response) {
 ListTile makeListTile(String title, BuildContext context) {
   return ListTile(
     contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-    title: Text(
-      title,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-          color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.0),
-    ),
+    title: Text(title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: Theme.of(context).textTheme.title),
     onTap: () {
       var topic = Topic(title, "", null);
       Navigator.pushNamed(

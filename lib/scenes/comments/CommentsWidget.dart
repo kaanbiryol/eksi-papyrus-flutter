@@ -1,8 +1,8 @@
-import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 import 'CommentsBloc.dart';
 import 'CommentsListViewWidget.dart';
 
@@ -16,7 +16,19 @@ class CommentsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("CommentsWidget BUILT" + isQuery.toString());
-    final topAppBar = AppBar(elevation: 0.1, title: Text(topic.title));
+    final topAppBar = AppBar(
+      elevation: 0.1,
+      title: Text(topic.title),
+      actions: <Widget>[
+        IconButton(
+          color: Theme.of(context).primaryIconTheme.color,
+          icon: Icon(Icons.share),
+          onPressed: () {
+            Share.share(topic.url);
+          },
+        )
+      ],
+    );
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(builder: (_) => CommentsBloc([], 1)),

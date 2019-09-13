@@ -12,7 +12,14 @@ class AppThemes {
     scaffoldBackgroundColor: AppColors.dark_background,
     appBarTheme: AppBarTheme(color: AppColors.dark_background),
     dividerColor: AppColors.dark_listDivider,
-    textTheme: TextTheme(title: TextStyles.darkTitle),
+    primaryIconTheme: IconThemeData(color: AppColors.dark_primaryIcon),
+    accentIconTheme: IconThemeData(color: AppColors.dark_accentIcon),
+    textTheme: TextTheme(
+        title: TextStyles.darkTitle,
+        body1: TextStyles.commentContent
+            .copyWith(color: AppColors.dark_primaryTextColor),
+        subtitle: TextStyles.commentDetails
+            .copyWith(color: AppColors.dark_secondaryTextColor)),
   );
 
   static final light = ThemeData(
@@ -22,6 +29,15 @@ class AppThemes {
     scaffoldBackgroundColor: AppColors.background,
     appBarTheme: AppBarTheme(color: AppColors.background),
     dividerColor: AppColors.listDivider,
-    textTheme: TextTheme(title: TextStyles.lightTitle),
+    primaryIconTheme: IconThemeData(
+      color: AppColors.primaryIcon,
+    ),
+    accentIconTheme: IconThemeData(color: AppColors.accentIcon),
+    textTheme: TextTheme(
+        title: TextStyles.lightTitle,
+        body1: TextStyles.commentContent
+            .copyWith(color: AppColors.primaryTextColor),
+        subtitle: TextStyles.commentDetails
+            .copyWith(color: AppColors.secondaryTextColor)),
   );
 }

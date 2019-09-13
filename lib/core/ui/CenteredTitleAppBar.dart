@@ -1,5 +1,4 @@
 import 'package:eksi_papyrus/core/AppStrings.dart';
-import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
 import 'package:eksi_papyrus/scenes/search/TopicSearchDelegate.dart';
@@ -69,13 +68,12 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
 
   Widget appBar(List<Channel> list) {
     return AppBar(
+      elevation: 0.6,
       leading: IconButton(
-        icon: Icon(Icons.settings),
+        color: Theme.of(context).primaryIconTheme.color,
+        icon: Icon(Icons.search),
         onPressed: () {
-          Navigator.pushNamed(
-            context,
-            SettingsRouting.routeToSettings,
-          );
+          showSearch(context: context, delegate: TopicSearchDelegate());
         },
       ),
       title: Text(AppStrings.appBarTitle),
@@ -83,9 +81,13 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
       bottom: tabsWidget(list),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.search),
+          color: Theme.of(context).primaryIconTheme.color,
+          icon: Icon(Icons.settings),
           onPressed: () {
-            showSearch(context: context, delegate: TopicSearchDelegate());
+            Navigator.pushNamed(
+              context,
+              SettingsRouting.routeToSettings,
+            );
           },
         ),
       ],
@@ -148,9 +150,8 @@ class AppBarLinearProgressIndicator extends StatelessWidget
     return AnimatedContainer(
       child: LinearProgressIndicator(
         backgroundColor: Theme.of(context).backgroundColor,
-        valueColor: AlwaysStoppedAnimation<Color>(
-          AppColors.accent,
-        ),
+        valueColor:
+            AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
         value: null,
       ),
       duration: Duration(seconds: 2),
