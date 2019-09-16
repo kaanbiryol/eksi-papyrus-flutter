@@ -1,5 +1,6 @@
 import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/core/utils/DateUtils.dart';
+import 'package:eksi_papyrus/core/utils/HiveUtils.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +9,6 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'CommentsWidgetRouting.dart';
 import 'networking/models/CommentsResponse.dart';
 
@@ -101,7 +101,9 @@ class CommentsListTile extends StatelessWidget {
                       iconSize: 16,
                       icon: Icon(Icons.favorite),
                       color: Theme.of(context).accentIconTheme.color,
-                      onPressed: () {},
+                      onPressed: () {
+                        HiveUtils.instance.saveComment(comment);
+                      },
                     ),
                   )
                 ],
