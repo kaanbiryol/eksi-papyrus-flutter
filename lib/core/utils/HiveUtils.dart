@@ -33,6 +33,7 @@ class HiveUtils {
     Directory directory = await getApplicationDocumentsDirectory();
     _directory = directory;
     Hive.init(directory.path);
+    Hive.registerAdapter(CommentAdapter(), 0);
   }
 
   static const String _kSavedComments = "savedComments";
@@ -43,15 +44,16 @@ class HiveUtils {
         await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     //TODO: permissions
     var box = await Hive.openBox(_kSavedCommentsBox);
-    List<Comment> savedComments =
+    List<dynamic> savedComments =
         box.get(_kSavedComments, defaultValue: List<Comment>());
-    return savedComments;
+    var test = new List<Comment>.from(savedComments);
+    return test;
   }
 
   Future<void> saveComment(Comment comment) async {
     List<Comment> savedCommentList = await readSavedComments();
     var box = await Hive.openBox(_kSavedCommentsBox);
     savedCommentList.add(comment);
-    box.put(_kSavedComments, comment).whenComplete(() => box.close());
+    box.put(_kSavedComments, savedCommentList).whenComplete(() => box.close());
   }
 }

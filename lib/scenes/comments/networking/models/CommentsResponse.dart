@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+part 'CommentsResponse.g.dart';
 
 class CommentsResponse {
   final List<Comment> comments;
@@ -20,17 +21,27 @@ class CommentsResponse {
       };
 }
 
+@HiveType()
 class Comment {
+  @HiveField(0)
   String id;
+  @HiveField(1)
   String comment;
+  @HiveField(2)
   String likeCount;
+  @HiveField(3)
   String date;
+  @HiveField(4)
   String ownerUsername;
+  @HiveField(5)
   String ownerProfileUrl;
+  @HiveField(6)
   String commentUrl;
 
   Comment(this.id, this.comment, this.likeCount, this.date, this.ownerUsername,
       this.ownerProfileUrl, this.commentUrl);
+
+  Comment.empty();
 
   Comment.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -48,50 +59,4 @@ class Comment {
         'ownerProfileUrl': ownerProfileUrl,
         'commentUrl': ownerUsername,
       };
-}
-
-class CommentHiveAdapter extends TypeAdapter<Comment> {
-  @override
-  Comment read(BinaryReader reader) {
-    var commentObject = Comment();
-    var numberOfFields = reader.readByte();
-    for (var i = 0; i < numberOfFields; i++) {
-      var value = reader.read();
-      switch (reader.readByte()) {
-        case 0:
-          commentObject.id = value as String;
-          break;
-        case 1:
-          commentObject.comment = value as String;
-          break;
-        case 2:
-          commentObject.likeCount = value as String;
-          break;
-        case 3:
-          commentObject.date = value as String;
-          break;
-        case 4:
-          commentObject.ownerUsername = value as String;
-          break;
-        case 5:
-          commentObject.ownerProfileUrl = value as String;
-          break;
-        case 6:
-          commentObject.commentUrl = value as String;
-          break;
-      }
-    }
-    return commentObject;
-  }
-
-  @override
-  void write(BinaryWriter writer, Comment obj) {
-    writer.write(obj.id);
-    writer.write(obj.comment);
-    writer.write(obj.likeCount);
-    writer.write(obj.date);
-    writer.write(obj.ownerUsername);
-    writer.write(obj.ownerProfileUrl);
-    writer.write(obj.commentUrl);
-  }
 }
