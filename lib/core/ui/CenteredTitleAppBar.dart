@@ -1,8 +1,8 @@
 import 'package:eksi_papyrus/core/AppStrings.dart';
+import 'package:eksi_papyrus/core/Router.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
 import 'package:eksi_papyrus/scenes/search/TopicSearchDelegate.dart';
-import 'package:eksi_papyrus/scenes/settings/SettingsRouting.dart';
 import 'package:eksi_papyrus/scenes/topics/TopicsListWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -82,11 +82,21 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
       actions: <Widget>[
         IconButton(
           color: Theme.of(context).primaryIconTheme.color,
+          icon: Icon(Icons.favorite),
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              RoutingKeys.favorites,
+            );
+          },
+        ),
+        IconButton(
+          color: Theme.of(context).primaryIconTheme.color,
           icon: Icon(Icons.settings),
           onPressed: () {
             Navigator.pushNamed(
               context,
-              SettingsRouting.routeToSettings,
+              RoutingKeys.settings,
             );
           },
         ),

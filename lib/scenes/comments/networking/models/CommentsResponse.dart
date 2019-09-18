@@ -59,4 +59,11 @@ class Comment {
         'ownerProfileUrl': ownerProfileUrl,
         'commentUrl': ownerUsername,
       };
+
+  bool operator ==(other) {
+    return id == other.id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

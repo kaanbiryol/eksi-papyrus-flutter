@@ -1,6 +1,7 @@
 import 'package:eksi_papyrus/core/AppStrings.dart';
 import 'package:eksi_papyrus/core/styles/AppThemes.dart';
 import 'package:eksi_papyrus/core/ui/CenteredTitleAppBar.dart';
+import 'package:eksi_papyrus/core/utils/HiveUtils.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsBloc.dart';
 import 'package:eksi_papyrus/scenes/search/networking/SearchResultBloc.dart';
@@ -14,6 +15,7 @@ import 'core/utils/ThemeUtils.dart';
 
 void main() async {
   ThemeType themeType = await SharedPreferencesUtils.getCurrentTheme();
+  HiveUtils.instance.registerAdapters();
   runApp(new MyApp(themeType));
 }
 

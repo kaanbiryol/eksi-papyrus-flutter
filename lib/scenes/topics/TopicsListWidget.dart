@@ -1,3 +1,4 @@
+import 'package:eksi_papyrus/core/Router.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:flutter/material.dart';
@@ -82,34 +83,49 @@ class _TopicsListWidgetState extends State<TopicsListWidget>
         ));
   }
 
-  ListTile makeListTile(Topic topic, BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-      leading: Container(
-        width: 50,
-        padding: EdgeInsets.all(12.0),
-        decoration: new BoxDecoration(
-          color: Theme.of(context).accentColor,
-          borderRadius: new BorderRadius.all(new Radius.circular(4.0)),
+  Widget makeListTile(Topic topic, BuildContext context) {
+    return AnimatedContainer(
+      duration: Duration(),
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            RoutingKeys.comments,
+            arguments: CommentsWidgetRouteArguments(topic, false),
+          );
+        },
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: 52,
+                padding: EdgeInsets.fromLTRB(12, 10, 12, 10),
+                decoration: new BoxDecoration(
+                  color: Theme.of(context).accentColor,
+                  borderRadius: new BorderRadius.all(new Radius.circular(4.0)),
+                ),
+                child: Text(topic.numberOfComments,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13.0)),
+              ),
+              Container(
+                width: 16.0,
+              ),
+              Flexible(
+                flex: 1,
+                child: Text(topic.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.title),
+              ),
+            ],
+          ),
         ),
-        child: Text(topic.numberOfComments,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 13.0)),
       ),
-      title: Text(topic.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.title),
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          CommentsWidgetRouting.routeToComments,
-          arguments: CommentsWidgetRouteArguments(topic, false),
-        );
-      },
     );
   }
 

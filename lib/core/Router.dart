@@ -1,6 +1,6 @@
 import 'package:eksi_papyrus/scenes/comments/CommentsWidget.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
-import 'package:eksi_papyrus/scenes/settings/SettingsRouting.dart';
+import 'package:eksi_papyrus/scenes/savedComments/SavedCommentsWidget.dart';
 import 'package:eksi_papyrus/scenes/settings/SettingsWidget.dart';
 import 'package:flutter/material.dart';
 
@@ -9,16 +9,20 @@ class Router {
     print(settings.name);
     // FIX ME: Extracting args frmo MOdalRoute causes Comments widget to redraw and resend request WHY?
     switch (settings.name) {
-      case CommentsWidgetRouting.routeToComments:
+      case RoutingKeys.comments:
         final CommentsWidgetRouteArguments args = settings.arguments;
         return MaterialPageRoute(
           builder: (context) {
             return CommentsWidget(topic: args.topic, isQuery: args.isQuery);
           },
         );
-      case SettingsRouting.routeToSettings:
+      case RoutingKeys.settings:
         return MaterialPageRoute(builder: (context) {
           return SettingsWidget();
+        });
+      case RoutingKeys.favorites:
+        return MaterialPageRoute(builder: (context) {
+          return SavedCommentsWidget();
         });
       default:
         //TODO remove this
@@ -29,4 +33,10 @@ class Router {
                 ));
     }
   }
+}
+
+class RoutingKeys {
+  static const settings = "/routeToSettings";
+  static const comments = "/routeToComments";
+  static const favorites = "/routeToFavorites";
 }

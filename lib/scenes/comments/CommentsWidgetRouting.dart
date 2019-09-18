@@ -5,7 +5,3 @@ class CommentsWidgetRouteArguments {
   bool isQuery = false;
   CommentsWidgetRouteArguments(this.topic, this.isQuery);
 }
-
-class CommentsWidgetRouting {
-  static const routeToComments = "/routeToComments";
-}

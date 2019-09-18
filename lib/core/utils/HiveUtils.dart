@@ -1,27 +1,19 @@
 import 'dart:io';
-
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsResponse.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class HiveUtils {
-  // HiveUtils._();
-  // static HiveUtils _instance;
-  // Future<HiveUtils> get hive async {
-  //   if (_instance != null) return _instance;
-  //   _instance = await initHive();
-  //   return _instance;
-  // }
+  static const String _kSavedComments = "savedComments";
+  static const String _kSavedCommentsBox = "savedCommentsBox";
 
-  // initHive() async {
-  //   Directory directory = await getApplicationDocumentsDirectory();
-  //   Hive.init(directory.path);
-  // }
+  List<Comment> favoritesList = [];
 
   HiveUtils._();
   static Directory _directory;
+
   static final HiveUtils _instance = HiveUtils._();
+
   static HiveUtils get instance {
     if (_directory == null) {
       _initHive();
@@ -33,27 +25,37 @@ class HiveUtils {
     Directory directory = await getApplicationDocumentsDirectory();
     _directory = directory;
     Hive.init(directory.path);
+  }
+
+  void registerAdapters() {
     Hive.registerAdapter(CommentAdapter(), 0);
   }
 
-  static const String _kSavedComments = "savedComments";
-  static const String _kSavedCommentsBox = "savedCommentsBox";
-
   Future<List<Comment>> readSavedComments() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     //TODO: permissions
     var box = await Hive.openBox(_kSavedCommentsBox);
-    List<dynamic> savedComments =
+    List<dynamic> dynamicSavedComments =
         box.get(_kSavedComments, defaultValue: List<Comment>());
-    var test = new List<Comment>.from(savedComments);
-    return test;
+    var savedComments = new List<Comment>.from(dynamicSavedComments);
+    favoritesList = savedComments;
+    return savedComments;
   }
 
   Future<void> saveComment(Comment comment) async {
-    List<Comment> savedCommentList = await readSavedComments();
+    List<Comment> savedComments = await readSavedComments();
+    if (savedComments.contains(comment)) return;
     var box = await Hive.openBox(_kSavedCommentsBox);
-    savedCommentList.add(comment);
-    box.put(_kSavedComments, savedCommentList).whenComplete(() => box.close());
+    savedComments.add(comment);
+    favoritesList = savedComments;
+    box.put(_kSavedComments, savedComments).whenComplete(() => box.close());
+  }
+
+  Future<void> removeComment(Comment comment) async {
+    List<Comment> savedComments = await readSavedComments();
+    if (!savedComments.contains(comment)) return;
+    var box = await Hive.openBox(_kSavedCommentsBox);
+    savedComments.remove(comment);
+    favoritesList = savedComments;
+    box.put(_kSavedComments, savedComments).whenComplete(() => box.close());
   }
 }

@@ -79,6 +79,7 @@ class ChannelChipWidgetState extends State<ChannelChipWidget> {
     );
   }
 
+  //TODO == operator
   bool isUserChannel(Channel channel) {
     for (var userChannel in userChannels) {
       if (userChannel.title == channel.title) {

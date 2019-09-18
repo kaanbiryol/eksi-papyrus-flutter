@@ -1,3 +1,4 @@
+import 'package:eksi_papyrus/core/Router.dart';
 import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsWidgetRouting.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
@@ -103,7 +104,7 @@ ListTile makeListTile(String title, BuildContext context) {
       var topic = Topic(title, "", null);
       Navigator.pushNamed(
         context,
-        CommentsWidgetRouting.routeToComments,
+        RoutingKeys.comments,
         arguments: CommentsWidgetRouteArguments(topic, true),
       );
     },

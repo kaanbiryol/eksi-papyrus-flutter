@@ -1,3 +1,4 @@
+import 'package:eksi_papyrus/core/Router.dart';
 import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/core/utils/DateUtils.dart';
 import 'package:eksi_papyrus/core/utils/HiveUtils.dart';
@@ -62,7 +63,7 @@ class CommentsListTile extends StatelessWidget {
                     var topic = Topic(title, null, url);
                     Navigator.pushNamed(
                       context,
-                      CommentsWidgetRouting.routeToComments,
+                      RoutingKeys.comments,
                       arguments: CommentsWidgetRouteArguments(topic, true),
                     );
                   } else {
@@ -93,24 +94,56 @@ class CommentsListTile extends StatelessWidget {
                       },
                     ),
                   ),
-                  SizedBox(
-                    height: 16.0,
-                    width: 16.0,
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      iconSize: 16,
-                      icon: Icon(Icons.favorite),
-                      color: Theme.of(context).accentIconTheme.color,
-                      onPressed: () {
-                        HiveUtils.instance.saveComment(comment);
-                      },
-                    ),
-                  )
+                  new FavoriteButtonWidget(
+                      comment: comment,
+                      selected:
+                          HiveUtils.instance.favoritesList.contains(comment))
                 ],
               )
             ],
           )
         ],
+      ),
+    );
+  }
+}
+
+
+class FavoriteButtonWidget extends StatefulWidget {
+  FavoriteButtonWidget({
+    Key key,
+    @required this.comment,
+    this.selected,
+  }) : super(key: key);
+
+  final Comment comment;
+  bool selected;
+
+  @override
+  _FavoriteButtonWidgetState createState() => _FavoriteButtonWidgetState();
+}
+
+class _FavoriteButtonWidgetState extends State<FavoriteButtonWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 16.0,
+      width: 16.0,
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        iconSize: 16,
+        icon: Icon(Icons.favorite),
+        color: widget.selected
+            ? Colors.red
+            : Theme.of(context).accentIconTheme.color,
+        onPressed: () {
+          widget.selected
+              ? HiveUtils.instance.removeComment(widget.comment)
+              : HiveUtils.instance.saveComment(widget.comment);
+          setState(() {
+            widget.selected = !widget.selected;
+          });
+        },
       ),
     );
   }
