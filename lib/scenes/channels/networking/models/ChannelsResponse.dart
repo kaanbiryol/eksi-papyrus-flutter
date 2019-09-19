@@ -29,4 +29,11 @@ class Channel {
         'title': title,
         'url': url,
       };
+
+  bool operator ==(other) {
+    return title == other.title;
+  }
+
+  @override
+  int get hashCode => this.title.hashCode;
 }

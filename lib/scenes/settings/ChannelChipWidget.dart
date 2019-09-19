@@ -28,7 +28,7 @@ class ChannelChipWidgetState extends State<ChannelChipWidget> {
               print("USER Channels " + userChannels.toString());
               return chipWidget(context);
             default:
-              return Text("KAAN");
+              return Container();
           }
         });
   }
@@ -56,7 +56,7 @@ class ChannelChipWidgetState extends State<ChannelChipWidget> {
                   Channel channel = allChannels[index];
                   return FilterChip(
                     label: Text(channel.title),
-                    selected: isUserChannel(channel),
+                    selected: userChannels.contains(channel),
                     onSelected: (bool value) {
                       setState(() {
                         if (value) {
@@ -77,15 +77,5 @@ class ChannelChipWidgetState extends State<ChannelChipWidget> {
         ),
       ),
     );
-  }
-
-  //TODO == operator
-  bool isUserChannel(Channel channel) {
-    for (var userChannel in userChannels) {
-      if (userChannel.title == channel.title) {
-        return true;
-      }
-    }
-    return false;
   }
 }
