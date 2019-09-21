@@ -1,5 +1,3 @@
-import 'package:eksi_papyrus/core/styles/AppColors.dart';
-import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsListTile.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
