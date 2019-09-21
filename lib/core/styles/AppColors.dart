@@ -15,7 +15,7 @@ class AppColors {
   static const dark_background = Color.fromRGBO(32, 33, 37, 1.0);
   static const dark_accent = Color.fromRGBO(49, 50, 54, 1.0);
   static const dark_primaryIcon = Color.fromRGBO(255, 255, 255, 1.0);
-  static const dark_accentIcon = Color.fromRGBO(255, 255, 255, 1.0);
+  static const dark_accentIcon = Color.fromRGBO(49, 50, 54, 1.0);
   static const dark_listDivider = Color.fromRGBO(49, 50, 54, 1.0);
 
   static const dark_primaryTextColor = Color.fromRGBO(255, 255, 255, 1);

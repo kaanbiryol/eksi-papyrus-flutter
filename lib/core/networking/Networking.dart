@@ -18,6 +18,7 @@ class Networking {
     return _instance;
   }
 
+//TODO: handle connection failure
   Future<String> sendRequest(String apiPath,
       {Map<String, String> params = const {}, TYPE type = TYPE.get}) async {
     var requestUri = Uri.https(APIConstants.API_BASE_URL, apiPath, params);
