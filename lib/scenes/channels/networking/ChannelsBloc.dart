@@ -10,7 +10,9 @@ class ChannelsBloc with ChangeNotifier {
   //TODO is this necessary?
   ChannelsBloc(this._channels);
 
-  List<Channel> getChannels() => _channels;
+  List<Channel> getChannels() => _channels.where((channel) {
+        return channel.title != "gündem";
+      }).toList();
   List<Channel> getUserChannels() => _userChannels;
 
   void updateUserChannels(List<Channel> channels) {

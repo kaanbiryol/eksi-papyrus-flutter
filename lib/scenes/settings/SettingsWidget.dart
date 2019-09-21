@@ -25,7 +25,7 @@ class SettingsWidget extends StatelessWidget {
                 value: theme.isDarkTheme(),
                 title: Text(
                   "Dark Theme",
-                  style: TextStyles.commentContent,
+                  style: Theme.of(context).textTheme.title,
                 ),
                 onChanged: (bool value) {
                   final theme = Provider.of<ThemeBloc>(context);
@@ -35,6 +35,13 @@ class SettingsWidget extends StatelessWidget {
                     statusBarColor: theme.getTheme().primaryColor,
                   ));
                 },
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+                child: Text(
+                  "Channels",
+                  style: Theme.of(context).textTheme.subhead,
+                ),
               ),
               ChannelChipWidget()
             ])));

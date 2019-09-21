@@ -76,7 +76,10 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
           showSearch(context: context, delegate: TopicSearchDelegate());
         },
       ),
-      title: Text(AppStrings.appBarTitle),
+      title: Text(
+        AppStrings.appBarTitle,
+        style: Theme.of(context).textTheme.headline,
+      ),
       centerTitle: true,
       bottom: tabsWidget(list),
       actions: <Widget>[

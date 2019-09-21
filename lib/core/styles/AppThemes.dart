@@ -15,6 +15,7 @@ class AppThemes {
     primaryIconTheme: IconThemeData(color: AppColors.dark_primaryIcon),
     accentIconTheme: IconThemeData(color: AppColors.dark_accentIcon),
     textTheme: TextTheme(
+        headline: TextStyles.navigationBarDarkTitle,
         title: TextStyles.darkTitle,
         body1: TextStyles.commentContent
             .copyWith(color: AppColors.dark_primaryTextColor),
@@ -34,6 +35,7 @@ class AppThemes {
     ),
     accentIconTheme: IconThemeData(color: AppColors.accentIcon),
     textTheme: TextTheme(
+        headline: TextStyles.navigationBarLightTitle,
         title: TextStyles.lightTitle,
         body1: TextStyles.commentContent
             .copyWith(color: AppColors.primaryTextColor),
