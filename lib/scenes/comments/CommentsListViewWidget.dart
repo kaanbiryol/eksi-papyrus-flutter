@@ -1,3 +1,4 @@
+import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsListTile.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
@@ -160,17 +161,120 @@ class CommentsListViewWidget extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Text(
-                      "Newest",
+                      "Bugün",
                       style: Theme.of(context).textTheme.subtitle,
                     ),
                   ),
                 ],
               ),
-              onPressed: () {},
-            )
+              onPressed: () {
+                showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        height: 140,
+                        color: AppColors.dark_primaryColor,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            FlatButton(
+                              textColor: Colors.white,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.today),
+                                        onPressed: () {},
+                                      ),
+                                      Text("Bugün"),
+                                    ],
+                                  ),
+                                  Checkbox(
+                                    checkColor: Colors.red,
+                                    activeColor: Colors.transparent,
+                                    onChanged: (bool value) {},
+                                    value: true,
+                                  )
+                                ],
+                              ),
+                              onPressed: () {},
+                            ),
+                            FlatButton(
+                              textColor: Colors.white,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.all_inclusive),
+                                        onPressed: () {},
+                                      ),
+                                      Text("Tüm zamanlar"),
+                                    ],
+                                  ),
+                                  Checkbox(
+                                    checkColor: Colors.red,
+                                    activeColor: Colors.transparent,
+                                    onChanged: (bool value) {},
+                                    value: true,
+                                  )
+                                ],
+                              ),
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: SizedBox(
+                  height: 18,
+                  width: 18,
+                  child: IconButton(
+                    color: Theme.of(context).accentIconTheme.color,
+                    padding: EdgeInsets.zero,
+                    icon: Icon(Icons.sort),
+                    iconSize: 18,
+                    onPressed: () {
+                      showModalBottomSheet<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return test(context);
+                          });
+                    },
+                  )),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget test(BuildContext context) {
+    return Container(
+      color: Theme.of(context).backgroundColor,
+      child: Padding(
+          padding: const EdgeInsets.all(16.0), child: makeListView(context)),
+    );
+  }
+
+  Widget makeListView(BuildContext context) {
+    return ListView.builder(
+      itemCount: 20,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(title: Text("Page " + index.toString()));
+      },
     );
   }
 
