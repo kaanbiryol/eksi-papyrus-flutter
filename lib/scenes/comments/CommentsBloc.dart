@@ -6,10 +6,12 @@ import 'networking/models/CommentsResponse.dart';
 
 class CommentsBloc with ChangeNotifier {
   List<Comment> _commentList = [];
+  List<int> pageNumbers = [];
   int _currentPage = 0;
   int _pageCount = 1;
   //TODO: set topicurl
   String topicUrl;
+  CommentType commentType;
 
   //TODO: move page to backend
   CommentsBloc(this._commentList, this._currentPage) {
@@ -17,7 +19,12 @@ class CommentsBloc with ChangeNotifier {
   }
 
   List<Comment> getCommentList() => _commentList;
-  int getCurrentPage() => _currentPage;
+  int getPageCount() => _pageCount;
+
+  void resetCommentList() {
+    _commentList.clear();
+    pageNumbers.clear();
+  }
 
   bool canPaginate() {
     return _currentPage + 1 <= _pageCount;
@@ -27,6 +34,11 @@ class CommentsBloc with ChangeNotifier {
     if (_currentPage < _pageCount) {
       _currentPage++;
     }
+  }
+
+  void setCurrentPage(int page) {
+    this._currentPage = page;
+    notifyListeners();
   }
 
   Future<CommentsResponse> fetchComments(String url, CommentType type) {
@@ -44,6 +56,8 @@ class CommentsBloc with ChangeNotifier {
       _commentList.addAll(response.comments);
       _currentPage = int.parse(response.page);
       _pageCount = int.parse(response.pageCount);
+      pageNumbers.add(_currentPage);
+      print("PAGE NUMBERS" + pageNumbers.toString());
       notifyListeners();
       return response;
     });

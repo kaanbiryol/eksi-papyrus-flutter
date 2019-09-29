@@ -8,8 +8,6 @@ import 'APIConstants.dart';
 enum TYPE { get, post }
 
 class Networking {
-  Networking._internal();
-
   Networking._privateConstructor();
 
   static final Networking _instance = Networking._privateConstructor();

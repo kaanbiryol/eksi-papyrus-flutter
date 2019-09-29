@@ -4,6 +4,8 @@ import 'package:eksi_papyrus/core/ui/CenteredTitleAppBar.dart';
 import 'package:eksi_papyrus/core/utils/HiveUtils.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsBloc.dart';
+import 'package:eksi_papyrus/scenes/comments/CommentsTypePickerWidget.dart';
+import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:eksi_papyrus/scenes/search/networking/SearchResultBloc.dart';
 import 'package:eksi_papyrus/scenes/topics/TopicsBloc.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +35,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        //TODO: put notifiers to corresponding widgets
         ChangeNotifierProvider(
             builder: (_) => TopicsBloc([]), key: UniqueKey()),
         ChangeNotifierProvider(builder: (_) => CommentsBloc([], 1)),
         ChangeNotifierProvider(builder: (_) => ChannelsBloc([])),
         ChangeNotifierProvider(builder: (_) => SearchResultBloc([])),
         ChangeNotifierProvider(builder: (_) => ThemeBloc(widget.themeType)),
+        ChangeNotifierProvider(builder: (_) => CommentsFilterBloc(CommentType.all)),
       ],
       child: ThemedMaterialApp(),
     );

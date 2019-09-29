@@ -1,4 +1,5 @@
 import 'package:eksi_papyrus/scenes/comments/CommentsListTile.dart';
+import 'package:eksi_papyrus/scenes/comments/CommentsPagePickerWidget.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,26 +19,35 @@ class CommentsListViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("CommentsListViewWidget BUILT");
+    final typePickerBloc =
+        Provider.of<CommentsFilterBloc>(context, listen: false);
+    typePickerBloc.setCommentType(topic.commentType);
     return makeFutureBuilder(context);
   }
 
   Widget makeFutureBuilder(BuildContext context) {
     print("FutureBuilder BUILT");
-    return FutureBuilder(
-      future: buildCommentsFuture(context),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.active:
-            return Center(child: CircularProgressIndicator());
-          case ConnectionState.waiting:
-            return Center(child: CircularProgressIndicator());
-          case ConnectionState.done:
-            return makeListViewHandler(context);
-          default:
-            return Column();
-        }
-      },
-    );
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    return Consumer<CommentsFilterBloc>(builder: (context, bloc, child) {
+      topic.commentType = bloc.commentType;
+      commentsBloc.setCurrentPage(bloc.filteredPage);
+      commentsBloc.resetCommentList();
+      return FutureBuilder(
+        future: buildCommentsFuture(context),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.active:
+              return Center(child: CircularProgressIndicator());
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+            case ConnectionState.done:
+              return makeListViewHandler(context);
+            default:
+              return Column();
+          }
+        },
+      );
+    });
   }
 
   Future buildCommentsFuture(BuildContext context) {
@@ -55,9 +65,7 @@ class CommentsListViewWidget extends StatelessWidget {
     return Center(child: CircularProgressIndicator());
   }
 
-  int calculateItemlistCount(
-      List<Comment> commentList, bool canPaginate, int currentPage) {
-    print("CURRENTPAGE" + currentPage.toString());
+  int calculateItemlistCount(List<Comment> commentList, bool canPaginate) {
     if (commentList != null) {
       if (canPaginate) {
         return commentList.length + 1;
@@ -74,8 +82,7 @@ class CommentsListViewWidget extends StatelessWidget {
     final commentsBloc = Provider.of<CommentsBloc>(context);
     var itemList = commentsBloc.getCommentList();
     var canPaginate = commentsBloc.canPaginate();
-    var itemCount = calculateItemlistCount(
-        itemList, canPaginate, commentsBloc.getCurrentPage());
+    var itemCount = calculateItemlistCount(itemList, canPaginate);
     print("itemCount" + itemCount.toString());
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
@@ -107,7 +114,6 @@ class CommentsListViewWidget extends StatelessWidget {
                     itemCount,
                     index,
                     canPaginate,
-                    commentsBloc.getCurrentPage(),
                     index >= itemList.length
                         ? Comment.empty()
                         : itemList[index]);
@@ -118,7 +124,7 @@ class CommentsListViewWidget extends StatelessWidget {
   }
 
   Widget decideListItem(BuildContext context, int itemCount, int index,
-      bool canPaginate, int current, Comment comment) {
+      bool canPaginate, Comment comment) {
     if (index + 1 == itemCount && canPaginate) {
       return loadMoreProgress(context);
     } else if (index > 0 && index % 10 == 0) {
@@ -128,15 +134,8 @@ class CommentsListViewWidget extends StatelessWidget {
     }
   }
 
-  Widget buildPageMark(BuildContext context, int pageNumber) {
-    return Container(
-      height: 50,
-      color: Theme.of(context).backgroundColor,
-      child: Center(child: Text("Page " + pageNumber.toString())),
-    );
-  }
-
   Widget buildListHeaderView(BuildContext context) {
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     return Container(
       height: 40,
       child: Padding(
@@ -191,7 +190,8 @@ class CommentsListViewWidget extends StatelessWidget {
                       showModalBottomSheet<void>(
                           context: context,
                           builder: (BuildContext context) {
-                            return test(context);
+                            return CommentsPagePickerWidget(
+                                pageCount: commentsBloc.getPageCount());
                           });
                     },
                   )),
@@ -202,20 +202,15 @@ class CommentsListViewWidget extends StatelessWidget {
     );
   }
 
-  Widget test(BuildContext context) {
+  Widget buildPageMark(BuildContext context, int pageNumber) {
+    print("PAHE NUMBER" + pageNumber.toString());
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     return Container(
+      height: 50,
       color: Theme.of(context).backgroundColor,
-      child: Padding(
-          padding: const EdgeInsets.all(16.0), child: makeListView(context)),
-    );
-  }
-
-  Widget makeListView(BuildContext context) {
-    return ListView.builder(
-      itemCount: 20,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(title: Text("Page " + index.toString()));
-      },
+      child: Center(
+          child: Text(
+              "Page " + commentsBloc.pageNumbers[pageNumber - 1].toString())),
     );
   }
 
@@ -224,8 +219,8 @@ class CommentsListViewWidget extends StatelessWidget {
   }
 
   void loadMore(BuildContext context) {
-    print("Load More");
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    print("Load More" + commentsBloc.getPageCount().toString());
     commentsBloc.fetchComments(topic.url, topic.commentType);
   }
 }

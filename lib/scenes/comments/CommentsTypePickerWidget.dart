@@ -1,19 +1,37 @@
 import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
-import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
-//TODO: wants to make final
-class CommentsTypePickerWidget extends StatefulWidget {
-  CommentType commentType;
-  CommentsTypePickerWidget({Key key, this.commentType}) : super(key: key);
-  _CommentsTypePickerWidgetState createState() =>
-      _CommentsTypePickerWidgetState();
+class CommentsFilterBloc extends ChangeNotifier {
+  CommentType _commentType;
+  int _filteredPage = 0;
+  CommentsFilterBloc(this._commentType);
+
+  get commentType => _commentType;
+  get filteredPage => _filteredPage;
+
+  void setCommentType(CommentType commentType) {
+    if (this._commentType == commentType) {
+      return;
+    }
+    this._commentType = commentType;
+    notifyListeners();
+  }
+
+  void setFilteredPage(int page) {
+    if (page == _filteredPage) {
+      return;
+    }
+    this._filteredPage = page;
+    notifyListeners();
+  }
 }
 
-class _CommentsTypePickerWidgetState extends State<CommentsTypePickerWidget> {
-  CommentType commentType;
+class CommentsTypePickerWidget extends StatelessWidget {
+  const CommentsTypePickerWidget({Key key, this.commentType}) : super(key: key);
+  final CommentType commentType;
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +41,21 @@ class _CommentsTypePickerWidgetState extends State<CommentsTypePickerWidget> {
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: buildCommentTypeButtons()));
+            children: buildCommentTypeButtons(context)));
   }
 
-  List<Widget> buildCommentTypeButtons() {
+  List<Widget> buildCommentTypeButtons(BuildContext context) {
     List<Widget> typeButtons = [];
 
     for (var commentType in CommentType.values) {
-      var button = buildCommentTypeButton(commentType);
+      var button = buildCommentTypeButton(context, commentType);
       typeButtons.add(button);
     }
 
     return typeButtons;
   }
 
-  Widget buildCommentTypeButton(CommentType commentType) {
+  Widget buildCommentTypeButton(BuildContext context, CommentType commentType) {
     return FlatButton(
       textColor: Colors.white,
       child: Row(
@@ -65,16 +83,16 @@ class _CommentsTypePickerWidgetState extends State<CommentsTypePickerWidget> {
         ],
       ),
       onPressed: () {
-        setState(() {
-          widget.commentType = commentType;
-          Navigator.of(context).pop();
-        });
+        final typePickerBloc =
+            Provider.of<CommentsFilterBloc>(context, listen: false);
+        typePickerBloc.setCommentType(commentType);
+        Navigator.of(context).pop();
       },
     );
   }
 
   bool isTypeSelected(CommentType commentType) {
-    return commentType == widget.commentType;
+    return commentType == this.commentType;
   }
 
   IconData makeCommentTypeIcon(CommentType commentType) {
