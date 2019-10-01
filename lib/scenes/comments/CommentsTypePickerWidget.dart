@@ -36,7 +36,7 @@ class CommentsTypePickerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 180,
+        height: 120,
         color: AppColors.dark_primaryColor,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -48,6 +48,9 @@ class CommentsTypePickerWidget extends StatelessWidget {
     List<Widget> typeButtons = [];
 
     for (var commentType in CommentType.values) {
+      if (commentType == CommentType.popular) {
+        continue;
+      }
       var button = buildCommentTypeButton(context, commentType);
       typeButtons.add(button);
     }
@@ -56,8 +59,11 @@ class CommentsTypePickerWidget extends StatelessWidget {
   }
 
   Widget buildCommentTypeButton(BuildContext context, CommentType commentType) {
+    var selected = isTypeSelected(commentType);
     return FlatButton(
-      textColor: Colors.white,
+      textColor: selected
+          ? Theme.of(context).primaryIconTheme.color
+          : Theme.of(context).accentIconTheme.color,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -65,6 +71,9 @@ class CommentsTypePickerWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               IconButton(
+                disabledColor: selected
+                    ? Theme.of(context).primaryIconTheme.color
+                    : Theme.of(context).accentIconTheme.color,
                 icon: Icon(makeCommentTypeIcon(commentType)),
                 onPressed: null,
               ),
@@ -72,12 +81,12 @@ class CommentsTypePickerWidget extends StatelessWidget {
             ],
           ),
           Visibility(
-            visible: isTypeSelected(commentType),
+            visible: selected,
             child: Checkbox(
               checkColor: Colors.red,
               activeColor: Colors.transparent,
               onChanged: (bool value) {},
-              value: isTypeSelected(commentType),
+              value: selected,
             ),
           )
         ],
