@@ -179,13 +179,13 @@ class CommentsListViewWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(3.0),
               child: SizedBox(
-                  height: 18,
-                  width: 18,
+                  height: 24,
+                  width: 24,
                   child: IconButton(
                     color: Theme.of(context).accentIconTheme.color,
                     padding: EdgeInsets.zero,
-                    icon: Icon(Icons.sort),
-                    iconSize: 18,
+                    icon: Icon(Icons.find_in_page),
+                    iconSize: 24,
                     onPressed: () {
                       showModalBottomSheet<void>(
                           context: context,

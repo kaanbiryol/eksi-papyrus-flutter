@@ -10,28 +10,16 @@ class SavedCommentsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topAppBar = AppBar(elevation: 0.1, title: Text("Favorites"));
+    final topAppBar = AppBar(elevation: 0.2, title: Text("Favorites"));
     return MultiProvider(
         providers: [],
         child: Scaffold(
             backgroundColor: Theme.of(context).backgroundColor,
             appBar: topAppBar,
-            body: makeListView()));
+            body: buildFutureBuilder()));
   }
 
-  Widget test(BuildContext context, List<Comment> commentList) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(),
-      itemCount: commentList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return CommentsListTile(
-          comment: commentList[index],
-        );
-      },
-    );
-  }
-
-  Widget makeListView() {
+  Widget buildFutureBuilder() {
     return FutureBuilder(
       future: HiveUtils.instance.readSavedComments(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -41,13 +29,69 @@ class SavedCommentsWidget extends StatelessWidget {
           case ConnectionState.waiting:
             return Center(child: CircularProgressIndicator());
           case ConnectionState.done:
-            final searchResults = snapshot.data as List<Comment>;
-            return test(context, searchResults);
+            final savedComments = snapshot.data as List<Comment>;
+            return SavedCommentsListWidget(
+              commentList: savedComments,
+            );
           default:
             //TODO: is this the right way?
             return Column();
         }
       },
+    );
+  }
+}
+
+class SavedCommentsListWidget extends StatefulWidget {
+  SavedCommentsListWidget({Key key, this.commentList}) : super(key: key);
+
+  List<Comment> commentList;
+
+  _SavedCommentsListWidgetState createState() =>
+      _SavedCommentsListWidgetState();
+}
+
+class _SavedCommentsListWidgetState extends State<SavedCommentsListWidget> {
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedList(
+      key: _listKey,
+      initialItemCount: widget.commentList.length,
+      itemBuilder: (BuildContext context, int index, Animation animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: _buildItem(index),
+        );
+      },
+    );
+  }
+
+  Widget _buildItem(int index) {
+    return CommentsListTile(
+        comment: widget.commentList[index],
+        likeHandler: () {
+          deleteItem(index);
+        });
+  }
+
+  void deleteItem(int index) {
+    _listKey.currentState.removeItem(
+      index,
+      (BuildContext context, Animation<double> animation) {
+        return FadeTransition(
+          opacity:
+              CurvedAnimation(parent: animation, curve: Interval(0.5, 1.0)),
+          child: SizeTransition(
+            sizeFactor:
+                CurvedAnimation(parent: animation, curve: Interval(0.0, 1.0)),
+            axisAlignment: 0.0,
+            child: _buildItem(index),
+          ),
+        );
+      },
+      duration: Duration(milliseconds: 600),
     );
   }
 }

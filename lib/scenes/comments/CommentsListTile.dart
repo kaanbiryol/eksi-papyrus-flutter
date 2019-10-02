@@ -14,9 +14,10 @@ import 'CommentsWidgetRouting.dart';
 import 'networking/models/CommentsResponse.dart';
 
 class CommentsListTile extends StatelessWidget {
-  const CommentsListTile({this.comment});
+  const CommentsListTile({this.comment, this.likeHandler});
 
   final Comment comment;
+  final VoidCallback likeHandler;
 
   @override
   Widget build(BuildContext context) {
@@ -95,9 +96,11 @@ class CommentsListTile extends StatelessWidget {
                     ),
                   ),
                   new FavoriteButtonWidget(
-                      comment: comment,
-                      selected:
-                          HiveUtils.instance.favoritesList.contains(comment))
+                    comment: comment,
+                    selected:
+                        HiveUtils.instance.favoritesList.contains(comment),
+                    likeHandler: likeHandler,
+                  )
                 ],
               )
             ],
@@ -108,15 +111,16 @@ class CommentsListTile extends StatelessWidget {
   }
 }
 
-
 class FavoriteButtonWidget extends StatefulWidget {
   FavoriteButtonWidget({
     Key key,
     @required this.comment,
     this.selected,
+    this.likeHandler,
   }) : super(key: key);
 
   final Comment comment;
+  final VoidCallback likeHandler;
   bool selected;
 
   @override
@@ -143,6 +147,9 @@ class _FavoriteButtonWidgetState extends State<FavoriteButtonWidget> {
           setState(() {
             widget.selected = !widget.selected;
           });
+          if (widget.likeHandler != null) {
+            widget.likeHandler();
+          }
         },
       ),
     );
