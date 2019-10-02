@@ -3,6 +3,7 @@ import 'package:eksi_papyrus/core/styles/AppThemes.dart';
 import 'package:eksi_papyrus/core/ui/CenteredTitleAppBar.dart';
 import 'package:eksi_papyrus/core/utils/HiveUtils.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
+import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsBloc.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsTypePickerWidget.dart';
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
@@ -17,14 +18,16 @@ import 'core/utils/ThemeUtils.dart';
 
 void main() async {
   ThemeType themeType = await SharedPreferencesUtils.getCurrentTheme();
+  List<Channel> userChannels = await SharedPreferencesUtils.getUserChannels();
   HiveUtils.instance.registerAdapters();
-  runApp(new MyApp(themeType));
+  runApp(new MyApp(themeType, userChannels));
 }
 
 class MyApp extends StatefulWidget {
-  MyApp(this.themeType);
+  MyApp(this.themeType, this.userChannels);
 
   final ThemeType themeType;
+  final List<Channel> userChannels;
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -39,10 +42,12 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
             builder: (_) => TopicsBloc([]), key: UniqueKey()),
         ChangeNotifierProvider(builder: (_) => CommentsBloc([], 1)),
-        ChangeNotifierProvider(builder: (_) => ChannelsBloc([])),
+        ChangeNotifierProvider(
+            builder: (_) => ChannelsBloc(widget.userChannels)),
         ChangeNotifierProvider(builder: (_) => SearchResultBloc([])),
         ChangeNotifierProvider(builder: (_) => ThemeBloc(widget.themeType)),
-        ChangeNotifierProvider(builder: (_) => CommentsFilterBloc(CommentType.all)),
+        ChangeNotifierProvider(
+            builder: (_) => CommentsFilterBloc(CommentType.all)),
       ],
       child: ThemedMaterialApp(),
     );

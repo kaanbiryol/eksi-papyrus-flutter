@@ -5,15 +5,13 @@ import 'AppColors.dart';
 class TextStyles {
   static TextStyle get navigationBarLightTitle => TextStyle(
       color: AppColors.primaryTextColor,
-      fontFamily: "IBMPlex",
-      fontWeight: FontWeight.w100,
+      fontWeight: FontWeight.w400,
       letterSpacing: -1,
       fontSize: 19.0);
 
   static TextStyle get navigationBarDarkTitle => TextStyle(
       color: AppColors.dark_primaryTextColor,
-      fontFamily: "IBMPlex",
-      fontWeight: FontWeight.w100,
+      fontWeight: FontWeight.w400,
       letterSpacing: -1,
       fontSize: 19.0);
 
@@ -46,8 +44,11 @@ class TextStyles {
       fontSize: 14.0);
 
   static TextStyle get commentAccent => TextStyle(
-      color: AppColors.accent,
+      color: AppColors.textAccent,
       fontFamily: "Noto",
       fontWeight: FontWeight.normal,
       fontSize: 14.0);
+
+  static TextStyle get darkSettingsTitle => TextStyle(
+      color: AppColors.textAccent, fontWeight: FontWeight.bold, fontSize: 13.0);
 }

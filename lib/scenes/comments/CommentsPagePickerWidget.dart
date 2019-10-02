@@ -29,7 +29,7 @@ class CommentsPagePickerWidget extends StatelessWidget {
 
   Widget buildPageButton(BuildContext context, int index) {
     return FlatButton(
-      textColor: Colors.white,
+      textColor: Theme.of(context).primaryTextTheme.title.color,
       child: Text("Page " + (index + 1).toString()),
       onPressed: () {
         final typePickerBloc =

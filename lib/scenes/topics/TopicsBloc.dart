@@ -50,23 +50,32 @@ class TopicsBloc with ChangeNotifier {
     return pageIndex;
   }
 
+  bool canPaginate(ValueKey key) {
+    var topicList = topicsMap[key.value];
+    var test = topicList._currentPage + 1 <= topicList._pageCount;
+    print("CANPAGINATE" + test.toString());
+    return topicList._currentPage + 1 <= topicList._pageCount;
+  }
+
   Future<TopicsResponse> fetchTopics(
       String url, ValueKey key, CommentType type) {
     return TopicsRequest()
-        .getTopics(topicsMap[key.value]?._currentPage ?? 1, url)
+        .getTopics(++topicsMap[key.value]?._currentPage ?? 1, url)
         .then((response) {
       var topics = response.topics.map((topic) {
         topic.commentType = type;
         return topic;
       }).toList();
 
+      var pageCount = int.parse(response.pageCount);
+      var currentPage = int.parse(response.currentPage);
       if (topicsMap.containsKey(key.value)) {
         var topicList = topicsMap[key.value];
-        topicList._currentPage = int.parse(response.currentPage);
-        topicList._pageCount = int.parse(response.pageCount);
+        topicList._currentPage = currentPage;
+        topicList._pageCount = pageCount;
         topicList.topicList.addAll(topics);
       } else {
-        topicsMap[key.value] = TopicList(key, url, 1, 1, topics);
+        topicsMap[key.value] = TopicList(key, url, 1, pageCount, topics);
       }
 
       notifyListeners();

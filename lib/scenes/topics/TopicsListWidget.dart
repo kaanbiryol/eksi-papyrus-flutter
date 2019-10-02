@@ -55,36 +55,54 @@ class _TopicsListWidgetState extends State<TopicsListWidget>
   }
 
   Widget loadMoreProgress(BuildContext context) {
-    return Center(child: CircularProgressIndicator());
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 0),
+      child: Center(child: CircularProgressIndicator()),
+    );
   }
 
   Widget makeListView(BuildContext context) {
-    final notifier = Provider.of<TopicsBloc>(context, listen: false);
+    final notifier = Provider.of<TopicsBloc>(context);
     print("REBUILT makeListView");
     var key = widget.key;
     var itemList = notifier.getPopularTopics2(key);
-    var itemCount = (itemList != null) ? itemList.length : 0;
+    var canPaginate = notifier.canPaginate(key);
+    var itemCount = calculateItemlistCount(itemList, canPaginate);
     return NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo is ScrollEndNotification &&
-              scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+              scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+              canPaginate) {
             print("SCROLL MAXED");
             loadMore(context);
           }
         },
         child: ListView.separated(
-          separatorBuilder: (context, index) => Divider(),
+          separatorBuilder: (context, index) => Divider(height: 1),
           itemCount: itemCount,
           itemBuilder: (BuildContext context, int index) {
-            return (index + 1 == itemCount)
+            return (index + 1 == itemCount && canPaginate)
                 ? loadMoreProgress(context)
                 : makeListTile(notifier.getPopularTopics2(key)[index], context);
           },
         ));
   }
 
+  int calculateItemlistCount(List<Topic> topicList, bool canPaginate) {
+    if (topicList != null) {
+      if (canPaginate) {
+        return topicList.length + 1;
+      } else {
+        return topicList.length;
+      }
+    } else {
+      return 0;
+    }
+  }
+
   Widget makeListTile(Topic topic, BuildContext context) {
     return AnimatedContainer(
+      padding: EdgeInsets.all(4.0),
       duration: Duration(),
       child: InkWell(
         onTap: () {

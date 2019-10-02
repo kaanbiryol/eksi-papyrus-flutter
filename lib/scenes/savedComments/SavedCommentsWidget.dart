@@ -10,7 +10,7 @@ class SavedCommentsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topAppBar = AppBar(elevation: 0.2, title: Text("Favorites"));
+    final topAppBar = AppBar(elevation: 0.6, title: Text("Favorites"));
     return MultiProvider(
         providers: [],
         child: Scaffold(
@@ -30,9 +30,11 @@ class SavedCommentsWidget extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           case ConnectionState.done:
             final savedComments = snapshot.data as List<Comment>;
-            return SavedCommentsListWidget(
-              commentList: savedComments,
-            );
+            return savedComments.isNotEmpty
+                ? SavedCommentsListWidget(
+                    commentList: savedComments,
+                  )
+                : Center(child: Text("Save some comments to see them here."));
           default:
             //TODO: is this the right way?
             return Column();
@@ -45,7 +47,7 @@ class SavedCommentsWidget extends StatelessWidget {
 class SavedCommentsListWidget extends StatefulWidget {
   SavedCommentsListWidget({Key key, this.commentList}) : super(key: key);
 
-  List<Comment> commentList;
+  final List<Comment> commentList;
 
   _SavedCommentsListWidgetState createState() =>
       _SavedCommentsListWidgetState();
@@ -91,7 +93,7 @@ class _SavedCommentsListWidgetState extends State<SavedCommentsListWidget> {
           ),
         );
       },
-      duration: Duration(milliseconds: 600),
+      duration: Duration(milliseconds: 400),
     );
   }
 }

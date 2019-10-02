@@ -20,7 +20,7 @@ class TopicSearchDelegate extends SearchDelegate {
         primaryTextTheme: theme.primaryTextTheme,
         textTheme: theme.textTheme.copyWith(
             title: theme.textTheme.title
-                .copyWith(color: AppColors.primaryTextColor)));
+                .copyWith(color: theme.primaryTextTheme.title.color)));
   }
 
   @override
@@ -70,7 +70,12 @@ Widget makeFutureBuilder(BuildContext context, String query) {
           return Center(child: CircularProgressIndicator());
         case ConnectionState.done:
           final searchResults = snapshot.data as SearchResponse;
-          return makeListView(context, searchResults);
+          return searchResults.titles.isNotEmpty
+              ? makeListView(context, searchResults)
+              : Center(
+                  child: Text("No entries found."),
+                );
+
         default:
           //TODO: is this the right way?
           return Column();

@@ -43,11 +43,16 @@ class CommentsListTile extends StatelessWidget {
       child: new Wrap(
         runSpacing: 0,
         children: <Widget>[
-          new Text(
-            comment.ownerUsername +
-                " - " +
-                DateUtils.timeAgoSinceDate(comment.date),
-            style: Theme.of(context).textTheme.subtitle,
+          GestureDetector(
+            onTap: () {
+              launch(comment.ownerProfileUrl);
+            },
+            child: new Text(
+              comment.ownerUsername +
+                  " - " +
+                  DateUtils.timeAgoSinceDate(comment.date),
+              style: Theme.of(context).textTheme.subtitle,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 3.0),
@@ -58,7 +63,6 @@ class CommentsListTile extends StatelessWidget {
                         p: Theme.of(context).textTheme.body1,
                         a: TextStyles.commentAccent),
                 onTapLink: (url) {
-                  print("mUrl" + url);
                   if (url.startsWith("/?q")) {
                     var title = url.replaceAll("/?q=", "").replaceAll("+", " ");
                     var topic = Topic(title, null, url);
@@ -72,7 +76,7 @@ class CommentsListTile extends StatelessWidget {
                   }
                 }),
           ),
-          new Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -95,7 +99,7 @@ class CommentsListTile extends StatelessWidget {
                       },
                     ),
                   ),
-                  new FavoriteButtonWidget(
+                  FavoriteButtonWidget(
                     comment: comment,
                     selected:
                         HiveUtils.instance.favoritesList.contains(comment),
@@ -111,6 +115,7 @@ class CommentsListTile extends StatelessWidget {
   }
 }
 
+//TODO: requires final
 class FavoriteButtonWidget extends StatefulWidget {
   FavoriteButtonWidget({
     Key key,

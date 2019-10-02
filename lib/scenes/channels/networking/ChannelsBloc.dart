@@ -7,8 +7,7 @@ class ChannelsBloc with ChangeNotifier {
   List<Channel> _channels = [];
   List<Channel> _userChannels = [];
 
-  //TODO is this necessary?
-  ChannelsBloc(this._channels);
+  ChannelsBloc(this._userChannels);
 
   List<Channel> getChannels() => _channels.where((channel) {
         return channel.title != "gündem";

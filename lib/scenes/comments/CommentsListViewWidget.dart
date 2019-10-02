@@ -100,7 +100,7 @@ class CommentsListViewWidget extends StatelessWidget {
         buildListHeaderView(context),
         Expanded(
           child: ListView.separated(
-              separatorBuilder: (context, index) => Divider(),
+              separatorBuilder: (context, index) => Divider(height: 1.0),
               itemCount: itemCount,
               itemBuilder: (BuildContext context, int index) {
                 print("Index -> " +

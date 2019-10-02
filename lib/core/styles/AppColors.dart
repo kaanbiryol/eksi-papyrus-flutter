@@ -20,4 +20,6 @@ class AppColors {
 
   static const dark_primaryTextColor = Color.fromRGBO(255, 255, 255, 1);
   static const dark_secondaryTextColor = Color.fromRGBO(73, 74, 76, 1.0);
+
+  static const textAccent = Color.fromRGBO(201, 10, 10, 1.0);
 }

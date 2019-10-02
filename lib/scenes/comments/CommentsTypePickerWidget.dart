@@ -37,7 +37,7 @@ class CommentsTypePickerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         height: 120,
-        color: AppColors.dark_primaryColor,
+        color: Theme.of(context).backgroundColor,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -49,6 +49,9 @@ class CommentsTypePickerWidget extends StatelessWidget {
 
     for (var commentType in CommentType.values) {
       if (commentType == CommentType.popular) {
+        typeButtons.add(Divider(
+          height: 1,
+        ));
         continue;
       }
       var button = buildCommentTypeButton(context, commentType);

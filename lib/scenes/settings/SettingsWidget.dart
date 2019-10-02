@@ -13,7 +13,7 @@ class SettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topAppBar = AppBar(elevation: 0.1, title: Text("Settings"));
+    final topAppBar = AppBar(elevation: 0.6, title: Text("Settings"));
     final theme = Provider.of<ThemeBloc>(context);
     return MultiProvider(
         providers: [],
@@ -36,8 +36,11 @@ class SettingsWidget extends StatelessWidget {
                   ));
                 },
               ),
+              Divider(
+                height: 1,
+              ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
                 child: Text(
                   "Channels",
                   style: Theme.of(context).textTheme.subhead,

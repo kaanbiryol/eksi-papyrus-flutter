@@ -43,6 +43,7 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
     var userChannels = channelsBloc.getUserChannels();
     _tabController = TabController(
         vsync: this, length: channelsBloc.getUserChannels().length);
+    //TODO: fix me
     if (userChannels.isEmpty) {
       channelsBloc.fetchUserChannels();
     }

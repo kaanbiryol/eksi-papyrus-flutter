@@ -40,6 +40,7 @@ class AppThemes {
         body1: TextStyles.commentContent
             .copyWith(color: AppColors.primaryTextColor),
         subtitle: TextStyles.commentDetails
-            .copyWith(color: AppColors.secondaryTextColor)),
+            .copyWith(color: AppColors.secondaryTextColor),
+        subhead: TextStyles.darkSettingsTitle),
   );
 }
