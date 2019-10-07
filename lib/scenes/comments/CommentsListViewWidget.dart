@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsListTile.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsPagePickerWidget.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
@@ -9,7 +10,7 @@ import 'CommentsBloc.dart';
 import 'CommentsTypePickerWidget.dart';
 import 'networking/models/CommentsResponse.dart';
 
-class CommentsListViewWidget extends StatelessWidget {
+class CommentsListViewWidget extends StatefulWidget {
   const CommentsListViewWidget({Key key, this.topic, this.isQuery})
       : super(key: key);
 
@@ -17,20 +18,39 @@ class CommentsListViewWidget extends StatelessWidget {
   final bool isQuery;
 
   @override
+  _CommentsListViewWidgetState createState() => _CommentsListViewWidgetState();
+}
+
+class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
+  PageController _pageController;
+  var currentPageViewIndex = 0;
+
+  @override
+  void initState() {
+    _pageController = PageController();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     print("CommentsListViewWidget BUILT");
     final typePickerBloc =
         Provider.of<CommentsFilterBloc>(context, listen: false);
-    typePickerBloc.setCommentType(topic.commentType);
-    return makeFutureBuilder(context);
+    typePickerBloc.setCommentType(widget.topic.commentType);
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          buildListHeaderView(context),
+          Expanded(child: makeFutureBuilder(context))
+        ]);
   }
 
   Widget makeFutureBuilder(BuildContext context) {
     print("FutureBuilder BUILT");
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     return Consumer<CommentsFilterBloc>(builder: (context, bloc, child) {
-      topic.commentType = bloc.commentType;
-      commentsBloc.setCurrentPage(bloc.filteredPage);
+      widget.topic.commentType = bloc.commentType;
+      commentsBloc.setCurrentPage(bloc.filteredPage, 0);
       commentsBloc.resetCommentList();
       return FutureBuilder(
         future: buildCommentsFuture(context),
@@ -41,7 +61,7 @@ class CommentsListViewWidget extends StatelessWidget {
             case ConnectionState.waiting:
               return Center(child: CircularProgressIndicator());
             case ConnectionState.done:
-              return makeListViewHandler(context);
+              return makePageView(context);
             default:
               return Column();
           }
@@ -52,17 +72,22 @@ class CommentsListViewWidget extends StatelessWidget {
 
   Future buildCommentsFuture(BuildContext context) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
-    if (isQuery) {
+    if (widget.isQuery) {
       print("isQuery");
-      return commentsBloc.fetchQueryResults(topic.title, topic.commentType);
+      return commentsBloc.fetchQueryResults(
+          widget.topic.title, widget.topic.commentType);
     } else {
       print("isNotQuery");
-      return commentsBloc.fetchComments(topic.url, topic.commentType);
+      return commentsBloc.fetchComments(
+          widget.topic.url, widget.topic.commentType, 0, 0, false);
     }
   }
 
   Widget loadMoreProgress(BuildContext context) {
-    return Center(child: CircularProgressIndicator());
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(child: CircularProgressIndicator()),
+    );
   }
 
   int calculateItemlistCount(List<Comment> commentList, bool canPaginate) {
@@ -77,38 +102,73 @@ class CommentsListViewWidget extends StatelessWidget {
     }
   }
 
-  Widget makeListViewHandler(BuildContext context) {
+  var userChannelsMemoizer = new AsyncMemoizer();
+  Widget makePageView(BuildContext context) {
+    print("makePageView");
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    return PageView.builder(
+      controller: _pageController,
+      itemBuilder: (context, index) {
+        if (index != currentPageViewIndex) {
+          userChannelsMemoizer = new AsyncMemoizer();
+        }
+        print("PAGE VIEW INDEX CHANGED  " + index.toString());
+        if (index == 0) {
+          return makeListViewHandler(context, index);
+        }
+        currentPageViewIndex = index;
+        return FutureBuilder(
+          key: PageStorageKey(index),
+          future: loadMore(context, false),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.active:
+                return Center(child: CircularProgressIndicator());
+              case ConnectionState.waiting:
+                return Center(child: CircularProgressIndicator());
+              case ConnectionState.done:
+                return makeListViewHandler(context, index);
+              default:
+                return Column();
+            }
+          },
+        );
+      },
+      itemCount: commentsBloc.getPageCount(),
+      scrollDirection: Axis.horizontal,
+    );
+  }
+
+  Widget makeListViewHandler(BuildContext context, int page) {
     print("NotificationListener BUILT");
     final commentsBloc = Provider.of<CommentsBloc>(context);
-    var itemList = commentsBloc.getCommentList();
-    var canPaginate = commentsBloc.canPaginate();
+    var itemList = commentsBloc.getCommentList(page);
+    var canPaginate = commentsBloc.canPaginate(page);
     var itemCount = calculateItemlistCount(itemList, canPaginate);
-    print("itemCount" + itemCount.toString());
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
         if (scrollInfo is ScrollEndNotification &&
             scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
             canPaginate) {
           print("SCROLL MAXED");
-          loadMore(context);
+          loadMore(context, true);
           return true;
         }
         return false;
       },
       child:
           Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-        buildListHeaderView(context),
         Expanded(
           child: ListView.separated(
               separatorBuilder: (context, index) => Divider(height: 1.0),
               itemCount: itemCount,
               itemBuilder: (BuildContext context, int index) {
-                print("Index -> " +
-                    index.toString() +
-                    " itemLength: -> " +
-                    itemList.length.toString() +
-                    " maxIndex: " +
-                    itemCount.toString());
+                // print("Index -> " +
+                //     index.toString() +
+                //     " itemLength: -> " +
+                //     itemList.length.toString() +
+                //     " maxIndex: " +
+                //     itemCount.toString());
                 return decideListItem(
                     context,
                     itemCount,
@@ -128,7 +188,7 @@ class CommentsListViewWidget extends StatelessWidget {
     if (index + 1 == itemCount && canPaginate) {
       return loadMoreProgress(context);
     } else if (index > 0 && index % 10 == 0) {
-      return buildPageMark(context, (index / 10 + 1).round());
+      return buildPageMark(context);
     } else {
       return makeListTile(comment, context);
     }
@@ -144,6 +204,13 @@ class CommentsListViewWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            IconButton(
+                icon: Icon(Icons.first_page),
+                onPressed: () {
+                  _pageController.animateToPage(1,
+                      duration: Duration(milliseconds: 200),
+                      curve: Curves.ease);
+                }),
             FlatButton(
               padding: EdgeInsets.all(3.0),
               color: Colors.transparent,
@@ -171,7 +238,7 @@ class CommentsListViewWidget extends StatelessWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return CommentsTypePickerWidget(
-                        commentType: topic.commentType,
+                        commentType: widget.topic.commentType,
                       );
                     });
               },
@@ -196,21 +263,26 @@ class CommentsListViewWidget extends StatelessWidget {
                     },
                   )),
             ),
+            IconButton(
+                icon: Icon(Icons.last_page),
+                onPressed: () {
+                  _pageController.animateToPage(3,
+                      duration: Duration(milliseconds: 200),
+                      curve: Curves.ease);
+                }),
           ],
         ),
       ),
     );
   }
 
-  Widget buildPageMark(BuildContext context, int pageNumber) {
-    print("PAHE NUMBER" + pageNumber.toString());
+  Widget buildPageMark(BuildContext context) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    var page = commentsBloc.pages[currentPageViewIndex].currentPage;
     return Container(
       height: 50,
-      color: Theme.of(context).backgroundColor,
-      child: Center(
-          child: Text(
-              "Page " + commentsBloc.pageNumbers[pageNumber - 1].toString())),
+      color: Theme.of(context).accentColor,
+      child: Center(child: Text("Page " + page.toString())),
     );
   }
 
@@ -218,9 +290,18 @@ class CommentsListViewWidget extends StatelessWidget {
     return CommentsListTile(comment: comment);
   }
 
-  void loadMore(BuildContext context) {
+  Future loadMore(BuildContext context, bool willPaginate) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
-    print("Load More" + commentsBloc.getPageCount().toString());
-    commentsBloc.fetchComments(topic.url, topic.commentType);
+    print("loadMore" + currentPageViewIndex.toString());
+    var pageCount = commentsBloc.pages[currentPageViewIndex].currentPage;
+    if (willPaginate) {
+      return commentsBloc.fetchComments(widget.topic.url,
+          widget.topic.commentType, pageCount, currentPageViewIndex, true);
+    } else {
+      return userChannelsMemoizer.runOnce(() async {
+        return commentsBloc.fetchComments(widget.topic.url,
+            widget.topic.commentType, pageCount, currentPageViewIndex, false);
+      });
+    }
   }
 }
