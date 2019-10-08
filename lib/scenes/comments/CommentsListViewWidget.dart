@@ -10,6 +10,18 @@ import 'CommentsBloc.dart';
 import 'CommentsTypePickerWidget.dart';
 import 'networking/models/CommentsResponse.dart';
 
+class ScrollPageNotifier extends ChangeNotifier {
+  int _currentPage = 0;
+  ScrollPageNotifier(this._currentPage);
+
+  void setCurrentPage(int page) {
+    _currentPage = page;
+    notifyListeners();
+  }
+
+  currentPage() => _currentPage;
+}
+
 class CommentsListViewWidget extends StatefulWidget {
   const CommentsListViewWidget({Key key, this.topic, this.isQuery})
       : super(key: key);
@@ -27,8 +39,15 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
 
   @override
   void initState() {
+    print("initState");
     _pageController = PageController();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -163,12 +182,14 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
               separatorBuilder: (context, index) => Divider(height: 1.0),
               itemCount: itemCount,
               itemBuilder: (BuildContext context, int index) {
-                // print("Index -> " +
-                //     index.toString() +
-                //     " itemLength: -> " +
-                //     itemList.length.toString() +
-                //     " maxIndex: " +
-                //     itemCount.toString());
+                print("Index -> " +
+                    index.toString() +
+                    " itemLength: -> " +
+                    itemList.length.toString() +
+                    " maxIndex: " +
+                    itemCount.toString() +
+                    "page" +
+                    (index ~/ 10).toString());
                 return decideListItem(
                     context,
                     itemCount,
@@ -190,11 +211,13 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     } else if (index > 0 && index % 10 == 0) {
       return buildPageMark(context);
     } else {
-      return makeListTile(comment, context);
+      return CommentsListTile(comment: comment);
     }
   }
 
   Widget buildListHeaderView(BuildContext context) {
+    print("buildListheaderView");
+    final scrollPageNotifier = Provider.of<ScrollPageNotifier>(context);
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     return Container(
       height: 40,
@@ -205,70 +228,62 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             IconButton(
+                color: Theme.of(context).primaryIconTheme.color,
                 icon: Icon(Icons.first_page),
                 onPressed: () {
-                  _pageController.animateToPage(1,
-                      duration: Duration(milliseconds: 200),
-                      curve: Curves.ease);
+                  _pageController.jumpToPage(0);
                 }),
             FlatButton(
               padding: EdgeInsets.all(3.0),
               color: Colors.transparent,
               textColor: Theme.of(context).textTheme.subtitle.color,
-              child: Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Icon(
-                      Icons.sort,
-                      color: Theme.of(context).accentIconTheme.color,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Text(
-                      "Bugün",
-                      style: Theme.of(context).textTheme.subtitle,
-                    ),
-                  ),
-                ],
-              ),
+              child: Text(scrollPageNotifier._currentPage.toString()),
               onPressed: () {
                 showModalBottomSheet<void>(
                     context: context,
                     builder: (BuildContext context) {
-                      return CommentsTypePickerWidget(
-                        commentType: widget.topic.commentType,
-                      );
+                      return CommentsPagePickerWidget(
+                          pageCount: commentsBloc.getPageCount());
                     });
               },
             ),
-            Padding(
-              padding: const EdgeInsets.all(3.0),
-              child: SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: IconButton(
-                    color: Theme.of(context).accentIconTheme.color,
-                    padding: EdgeInsets.zero,
-                    icon: Icon(Icons.find_in_page),
-                    iconSize: 24,
-                    onPressed: () {
-                      showModalBottomSheet<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CommentsPagePickerWidget(
-                                pageCount: commentsBloc.getPageCount());
-                          });
-                    },
-                  )),
-            ),
+            // FlatButton(
+            //   padding: EdgeInsets.all(3.0),
+            //   color: Colors.transparent,
+            //   textColor: Theme.of(context).textTheme.subtitle.color,
+            //   child: Row(
+            //     children: <Widget>[
+            //       Padding(
+            //         padding: const EdgeInsets.all(2.0),
+            //         child: Icon(
+            //           Icons.sort,
+            //           color: Theme.of(context).accentIconTheme.color,
+            //         ),
+            //       ),
+            //       Padding(
+            //         padding: const EdgeInsets.all(2.0),
+            //         child: Text(
+            //           "Bugün",
+            //           style: Theme.of(context).textTheme.subtitle,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            //   onPressed: () {
+            //     showModalBottomSheet<void>(
+            //         context: context,
+            //         builder: (BuildContext context) {
+            //           return CommentsTypePickerWidget(
+            //             commentType: widget.topic.commentType,
+            //           );
+            //         });
+            //   },
+            // ),
             IconButton(
+                color: Theme.of(context).primaryIconTheme.color,
                 icon: Icon(Icons.last_page),
                 onPressed: () {
-                  _pageController.animateToPage(3,
-                      duration: Duration(milliseconds: 200),
-                      curve: Curves.ease);
+                  _pageController.jumpToPage(commentsBloc.getPageCount() - 1);
                 }),
           ],
         ),
@@ -284,10 +299,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       color: Theme.of(context).accentColor,
       child: Center(child: Text("Page " + page.toString())),
     );
-  }
-
-  CommentsListTile makeListTile(Comment comment, BuildContext context) {
-    return CommentsListTile(comment: comment);
   }
 
   Future loadMore(BuildContext context, bool willPaginate) {

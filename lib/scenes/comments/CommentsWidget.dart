@@ -17,7 +17,7 @@ class CommentsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     print("CommentsWidget BUILT" + isQuery.toString());
     final topAppBar = AppBar(
-      elevation: 0.1,
+      elevation: 0.0,
       title: Text(topic.title),
       actions: <Widget>[
         IconButton(

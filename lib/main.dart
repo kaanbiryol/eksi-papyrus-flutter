@@ -5,6 +5,7 @@ import 'package:eksi_papyrus/core/utils/HiveUtils.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/ChannelsBloc.dart';
 import 'package:eksi_papyrus/scenes/channels/networking/models/ChannelsResponse.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsBloc.dart';
+import 'package:eksi_papyrus/scenes/comments/CommentsListViewWidget.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsTypePickerWidget.dart';
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:eksi_papyrus/scenes/search/networking/SearchResultBloc.dart';
@@ -48,6 +49,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(builder: (_) => ThemeBloc(widget.themeType)),
         ChangeNotifierProvider(
             builder: (_) => CommentsFilterBloc(CommentType.all)),
+        ChangeNotifierProvider(builder: (_) => ScrollPageNotifier(1)),
       ],
       child: ThemedMaterialApp(),
     );
