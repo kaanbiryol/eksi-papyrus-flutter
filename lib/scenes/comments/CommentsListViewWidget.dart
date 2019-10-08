@@ -1,6 +1,5 @@
 import 'package:async/async.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsListTile.dart';
-import 'package:eksi_papyrus/scenes/comments/CommentsPagePickerWidget.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -71,7 +70,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
 
   Widget makeFutureBuilder(BuildContext context) {
     print("FutureBuilder BUILT");
-    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     return FutureBuilder(
       future: buildCommentsFuture(context),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -145,18 +143,18 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   var userChannelsMemoizer = new AsyncMemoizer();
   Widget makePageView(BuildContext context) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    final scrollPageNotifier =
+        Provider.of<ScrollPageNotifier>(context, listen: false);
     return PageView.builder(
       controller: _pageController,
       itemBuilder: (context, index) {
+        //TODO: fix here
         if (index != currentPageViewIndex) {
           userChannelsMemoizer = new AsyncMemoizer();
         }
         if (index == 0) {
           return makeListViewHandler(context, index);
         }
-        currentPageViewIndex = index;
-        final scrollPageNotifier = Provider.of<ScrollPageNotifier>(context);
-        scrollPageNotifier.setCurrentPage(currentPageViewIndex + 1);
         return FutureBuilder(
           key: PageStorageKey(index),
           future: loadMore(context, false),
@@ -176,6 +174,10 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       },
       itemCount: commentsBloc.getPageCount(),
       scrollDirection: Axis.horizontal,
+      onPageChanged: (index) {
+        currentPageViewIndex = index;
+        scrollPageNotifier.setCurrentPage(index + 1);
+      },
     );
   }
 
