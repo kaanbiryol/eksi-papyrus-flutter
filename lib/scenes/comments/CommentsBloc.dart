@@ -23,6 +23,13 @@ class CommentsBloc with ChangeNotifier {
   CommentType commentType;
   List<Page> pages = [];
 
+  int listViewCurrentIndex = 1;
+
+  void setCurrentIndex(int page) {
+    listViewCurrentIndex = page;
+    notifyListeners();
+  }
+
   //TODO: move page to backend
   CommentsBloc(this._commentList, this._currentPage) {
     print("CREATED");
@@ -58,7 +65,6 @@ class CommentsBloc with ChangeNotifier {
   Future<CommentsResponse> fetchComments(
       String url, CommentType type, int index, int page, bool isPagination) {
     //increaseCurrentPage(index);
-    print("fetchComments");
     //TODO: why is _currentPage is set to 1?
 
     var commentPage = page + 1;

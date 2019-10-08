@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(builder: (_) => ThemeBloc(widget.themeType)),
         ChangeNotifierProvider(
             builder: (_) => CommentsFilterBloc(CommentType.all)),
-        ChangeNotifierProvider(builder: (_) => ScrollPageNotifier(1)),
+        ChangeNotifierProvider(builder: (_) => ScrollPageNotifier(1, 1)),
       ],
       child: ThemedMaterialApp(),
     );

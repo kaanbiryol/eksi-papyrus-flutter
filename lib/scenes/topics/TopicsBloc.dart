@@ -52,8 +52,8 @@ class TopicsBloc with ChangeNotifier {
 
   bool canPaginate(ValueKey key) {
     var topicList = topicsMap[key.value];
-    var test = topicList._currentPage + 1 <= topicList._pageCount;
-    print("CANPAGINATE" + test.toString());
+    // var test = topicList._currentPage + 1 <= topicList._pageCount;
+    // print("CANPAGINATE" + test.toString());
     return topicList._currentPage + 1 <= topicList._pageCount;
   }
 
