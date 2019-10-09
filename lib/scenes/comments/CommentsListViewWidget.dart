@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsListTile.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class CommentsListViewWidget extends StatefulWidget {
 
 class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   PageController _pageController;
+  List<AsyncMemoizer> memoizer = [];
 
   @override
   void initState() {
@@ -119,14 +121,23 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
 
   Widget makePageView(BuildContext context) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+
+    for (var i = 0; i < commentsBloc.getPageCount(); i++) {
+      memoizer.add(new AsyncMemoizer());
+    }
+
     final scrollPageNotifier =
         Provider.of<ScrollPageNotifier>(context, listen: false);
     return PageView.builder(
       controller: _pageController,
       itemBuilder: (context, index) {
+        print("PAGE VIEW" + index.toString());
+        if (index == 0) {
+          return makeListViewHandler(context, index);
+        }
         return FutureBuilder(
           key: PageStorageKey(index),
-          future: loadMore(context, index, false),
+          future: loadMore(context, index),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.active:
@@ -160,19 +171,19 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     var itemCount = calculateItemlistCount(itemList, canPaginate);
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
-        // if (scrollInfo is ScrollEndNotification) {
-        //   Future.microtask(() {
-        //     int currentItemIndex = getMeta(0, 0);
-        //     int currentPage = currentItemIndex ~/ 10;
-        //     if (scrollPageNotifier._currentPage != currentPage) {
-        //       scrollPageNotifier.setCurrentPage((page + 1) + currentPage);
-        //     }
-        //   });
-        // }
+        if (scrollInfo is ScrollEndNotification) {
+          Future.microtask(() {
+            int currentItemIndex = getMeta(0, 0);
+            int currentPage = currentItemIndex ~/ 10;
+            if (scrollPageNotifier._currentPage != currentPage) {
+              scrollPageNotifier.setCurrentPage((page + 1) + currentPage);
+            }
+          });
+        }
         if (scrollInfo is ScrollEndNotification &&
             scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
             canPaginate) {
-          loadMore(context, page, true);
+          loadMorePagination(context, page);
           return true;
         }
         return false;
@@ -184,14 +195,14 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
               separatorBuilder: (context, index) => Divider(height: 1.0),
               itemCount: itemCount,
               itemBuilder: (BuildContext context, int index) {
-                print("Index -> " +
-                    index.toString() +
-                    " itemLength: -> " +
-                    itemList.length.toString() +
-                    " maxIndex: " +
-                    itemCount.toString() +
-                    "page" +
-                    (index ~/ 10).toString());
+                // print("Index -> " +
+                //     index.toString() +
+                //     " itemLength: -> " +
+                //     itemList.length.toString() +
+                //     " maxIndex: " +
+                //     itemCount.toString() +
+                //     "page" +
+                //     (index ~/ 10).toString());
                 return MetaData(
                     behavior: HitTestBehavior.translucent,
                     metaData: index,
@@ -246,11 +257,19 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     );
   }
 
-  Future loadMore(BuildContext context, int page, bool willPaginate) {
+  Future loadMore(BuildContext context, int page) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     var pageCount = commentsBloc.pages[page].currentPage;
-    print("pageCount" + commentsBloc.pages[page].commentList.length.toString());
-    return commentsBloc.fetchComments(widget.topic.url,
-        widget.topic.commentType, pageCount, page, willPaginate);
+    return memoizer[page].runOnce(() async {
+      return commentsBloc.fetchComments(
+          widget.topic.url, widget.topic.commentType, pageCount, page, false);
+    });
+  }
+
+  Future loadMorePagination(BuildContext context, int page) {
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    var pageCount = commentsBloc.pages[page].currentPage;
+    return commentsBloc.fetchComments(
+        widget.topic.url, widget.topic.commentType, pageCount, page, true);
   }
 }
