@@ -45,12 +45,6 @@ class CommentsBloc with ChangeNotifier {
     return pages[index].commentList;
   }
 
-  void increaseCurrentPage(int index) {
-    if (pages[index].currentPage < pages[index].pageCount) {
-      pages[index].currentPage++;
-    }
-  }
-
   void setCurrentPage(int page, int index) {
     pages[index].currentPage = page;
     notifyListeners();
@@ -95,10 +89,6 @@ class CommentsBloc with ChangeNotifier {
       }
       return response;
     });
-  }
-
-  void test() {
-    notifyListeners();
   }
 
   Future<CommentsResponse> fetchQueryResults(

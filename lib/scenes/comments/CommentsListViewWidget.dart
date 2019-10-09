@@ -7,7 +7,9 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import 'CommentsBloc.dart';
+import 'CommentsPagePickerWidget.dart';
 import 'CommentsTypePickerWidget.dart';
+import 'networking/models/CommentsRequest.dart';
 import 'networking/models/CommentsResponse.dart';
 
 class ScrollPageNotifier extends ChangeNotifier {
@@ -62,10 +64,17 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   @override
   Widget build(BuildContext context) {
     print("CommentsListViewWidget BUILT");
-    final typePickerBloc =
-        Provider.of<CommentsFilterBloc>(context, listen: false);
-    typePickerBloc.setCommentType(widget.topic.commentType);
-    return makeFutureBuilder(context);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          height: 50,
+          child: buildListHeaderView(context),
+        ),
+        Expanded(child: makeFutureBuilder(context))
+      ],
+    );
   }
 
   Widget makeFutureBuilder(BuildContext context) {
@@ -128,6 +137,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
 
     final scrollPageNotifier =
         Provider.of<ScrollPageNotifier>(context, listen: false);
+    //scrollPageNotifier.setTotalPage(commentsBloc.getPageCount());
     return PageView.builder(
       controller: _pageController,
       itemBuilder: (context, index) {
@@ -173,7 +183,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       onNotification: (ScrollNotification scrollInfo) {
         if (scrollInfo is ScrollEndNotification) {
           Future.microtask(() {
-            int currentItemIndex = getMeta(0, 0);
+            int currentItemIndex = getMeta(0, 50);
             int currentPage = currentItemIndex ~/ 10;
             if (scrollPageNotifier._currentPage != currentPage) {
               scrollPageNotifier.setCurrentPage((page + 1) + currentPage);
@@ -271,5 +281,84 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     var pageCount = commentsBloc.pages[page].currentPage;
     return commentsBloc.fetchComments(
         widget.topic.url, widget.topic.commentType, pageCount, page, true);
+  }
+
+  Widget buildListHeaderView(BuildContext context) {
+    print("buildListheaderView");
+    final typePickerBloc =
+        Provider.of<CommentsFilterBloc>(context, listen: false);
+    final scrollPageNotifier =
+        Provider.of<ScrollPageNotifier>(context, listen: false);
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    return Container(
+      height: 40,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            IconButton(
+                color: Theme.of(context).primaryIconTheme.color,
+                icon: Icon(Icons.first_page),
+                onPressed: () {
+                  _pageController.jumpToPage(0);
+                }),
+            FlatButton(
+              padding: EdgeInsets.all(3.0),
+              color: Colors.transparent,
+              textColor: Theme.of(context).textTheme.subtitle.color,
+              child: Text(scrollPageNotifier.currentPageText()),
+              onPressed: () {
+                showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CommentsPagePickerWidget(
+                          pageCount: commentsBloc.getPageCount());
+                    });
+              },
+            ),
+            FlatButton(
+              padding: EdgeInsets.all(3.0),
+              color: Colors.transparent,
+              textColor: Theme.of(context).textTheme.subtitle.color,
+              child: Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Icon(
+                      Icons.sort,
+                      color: Theme.of(context).accentIconTheme.color,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Text(
+                      "Bugün",
+                      style: Theme.of(context).textTheme.subtitle,
+                    ),
+                  ),
+                ],
+              ),
+              onPressed: () {
+                showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CommentsTypePickerWidget(
+                        commentType: CommentType.all,
+                      );
+                    });
+              },
+            ),
+            IconButton(
+                color: Theme.of(context).primaryIconTheme.color,
+                icon: Icon(Icons.last_page),
+                onPressed: () {
+                  _pageController.jumpToPage(commentsBloc.getPageCount() - 1);
+                }),
+          ],
+        ),
+      ),
+    );
   }
 }

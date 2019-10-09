@@ -1,5 +1,4 @@
 import 'package:eksi_papyrus/core/styles/AppThemes.dart';
-import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/core/utils/ThemeUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

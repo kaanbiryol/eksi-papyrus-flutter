@@ -42,7 +42,6 @@ class _MyAppState extends State<MyApp> {
         //TODO: put notifiers to corresponding widgets
         ChangeNotifierProvider(
             builder: (_) => TopicsBloc([]), key: UniqueKey()),
-        ChangeNotifierProvider(builder: (_) => CommentsBloc(1)),
         ChangeNotifierProvider(
             builder: (_) => ChannelsBloc(widget.userChannels)),
         ChangeNotifierProvider(builder: (_) => SearchResultBloc([])),
