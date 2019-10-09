@@ -37,7 +37,7 @@ class CommentsWidget extends StatelessWidget {
     );
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(builder: (_) => CommentsBloc([], 1)),
+          ChangeNotifierProvider(builder: (_) => CommentsBloc(1)),
         ],
         child: Scaffold(
             backgroundColor: Theme.of(context).backgroundColor,

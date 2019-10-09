@@ -14,7 +14,6 @@ class Page {
 }
 
 class CommentsBloc with ChangeNotifier {
-  List<Comment> _commentList = [];
   List<int> pageNumbers = [];
   int _currentPage = 0;
   int _pageCount = 1;
@@ -31,17 +30,12 @@ class CommentsBloc with ChangeNotifier {
   }
 
   //TODO: move page to backend
-  CommentsBloc(this._commentList, this._currentPage) {
+  CommentsBloc(this._currentPage) {
     print("CREATED");
     pages.add(Page([], 1, 0));
   }
 
   int getPageCount() => _pageCount;
-
-  void resetCommentList() {
-    _commentList.clear();
-    pageNumbers.clear();
-  }
 
   bool canPaginate(int index) {
     return true;
@@ -77,7 +71,6 @@ class CommentsBloc with ChangeNotifier {
         .catchError((onError) {
       print(onError.toString());
     }).then((response) {
-      _commentList.addAll(response.comments);
       _currentPage = int.parse(response.page);
       _pageCount = int.parse(response.pageCount);
 
@@ -102,6 +95,10 @@ class CommentsBloc with ChangeNotifier {
       }
       return response;
     });
+  }
+
+  void test() {
+    notifyListeners();
   }
 
   Future<CommentsResponse> fetchQueryResults(
