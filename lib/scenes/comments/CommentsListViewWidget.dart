@@ -38,7 +38,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   void onScroll() {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     int currentPage = _pageController.page.toInt();
-    if (_scrollController.offset + 500 >=
+    if (_scrollController.offset + 600 >=
             _scrollController.position.maxScrollExtent &&
         commentsBloc.canPaginate(currentPage)) {
       loadMorePagination(context, currentPage);
@@ -60,7 +60,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     final scrollPageNotifier =
         Provider.of<CommentsPageScrollNotifier>(context, listen: false);
-    print("KAAN" + commentsBloc.getPageCount().toString());
     scrollPageNotifier.setTotalPage(commentsBloc.getPageCount());
   }
 
@@ -119,9 +118,12 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   }
 
   Widget loadMoreProgress(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(child: CircularProgressIndicator()),
+    return Container(
+      height: 50,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 
@@ -148,7 +150,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     return PageView.builder(
       controller: _pageController,
       itemBuilder: (context, index) {
-        print("PAGE VIEW" + index.toString());
         if (index == 0) {
           return makeListViewHandler(context, index);
         }
@@ -172,7 +173,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       itemCount: commentsBloc.getPageCount(),
       scrollDirection: Axis.horizontal,
       onPageChanged: (index) {
-        print("onPageChanged" + index.toString());
         scrollPageNotifier.setCurrentPage(index + 1);
       },
     );
@@ -190,9 +190,13 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       onNotification: (ScrollNotification scrollInfo) {
         if (scrollInfo is ScrollEndNotification) {
           Future.microtask(() {
-            int currentItemIndex = getMeta(0, 40);
+            int currentItemIndex = getMeta(0, 50);
+            print("currentItemIndex" + currentItemIndex.toString());
             int currentPage = currentItemIndex ~/ 10;
-            if (scrollPageNotifier.currentPage() != currentPage) {
+            print(scrollPageNotifier.currentPage().toString() +
+                " - " +
+                currentPage.toString());
+            if (scrollPageNotifier.currentPage() - 1 != currentPage) {
               scrollPageNotifier.setCurrentPage((page + 1) + currentPage);
             }
           });
@@ -226,8 +230,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
                         canPaginate,
                         index >= itemList.length
                             ? Comment.empty()
-                            : itemList[index],
-                        page));
+                            : itemList[index]));
               }),
         )
       ]),
@@ -235,23 +238,21 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   }
 
   Widget decideListItem(BuildContext context, int itemCount, int index,
-      bool canPaginate, Comment comment, int page) {
+      bool canPaginate, Comment comment) {
     if (index + 1 == itemCount && canPaginate) {
       return loadMoreProgress(context);
     } else if (index > 0 && index % 10 == 0) {
-      return buildPageMark(context, page);
+      return buildPageMark(context, index);
     } else {
       return CommentsListTile(comment: comment);
     }
   }
 
-  Widget buildPageMark(BuildContext context, int pageNumber) {
-    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
-    var page = commentsBloc.pages[pageNumber].currentPage;
+  Widget buildPageMark(BuildContext context, int index) {
     return Container(
       height: 50,
       color: Theme.of(context).accentColor,
-      child: Center(child: Text("Page " + page.toString())),
+      child: Center(child: Text("Page " + (index ~/ 10 + 1).toString())),
     );
   }
 

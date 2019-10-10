@@ -32,7 +32,7 @@ class CommentsWidget extends StatelessWidget {
     );
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(builder: (_) => CommentsBloc(1)),
+          ChangeNotifierProvider(builder: (_) => CommentsBloc()),
           ChangeNotifierProvider(
               builder: (_) => CommentsPageScrollNotifier(1, -1)),
         ],

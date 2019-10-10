@@ -13,7 +13,6 @@ class Page {
 }
 
 class CommentsBloc with ChangeNotifier {
-  int _currentPage = 0;
   int _pageCount = 1;
   //TODO: set topicurl
   String topicUrl;
@@ -21,7 +20,7 @@ class CommentsBloc with ChangeNotifier {
   List<Page> pages = [];
 
   //TODO: move page to backend
-  CommentsBloc(this._currentPage) {
+  CommentsBloc() {
     pages.add(Page([], 1, 0));
   }
 
@@ -46,8 +45,6 @@ class CommentsBloc with ChangeNotifier {
 
   Future<CommentsResponse> fetchComments(
       String url, CommentType type, int index, int page, bool isPagination) {
-    //increaseCurrentPage(index);
-    //TODO: why is _currentPage is set to 1?
     var commentPage = page + 1;
     if (isPagination) {
       commentPage = index + 1;
@@ -58,7 +55,7 @@ class CommentsBloc with ChangeNotifier {
         .catchError((onError) {
       print(onError.toString());
     }).then((response) {
-      _currentPage = int.parse(response.page);
+      var currentPage = int.parse(response.page);
       _pageCount = int.parse(response.pageCount);
 
       if (pages.length > page) {
@@ -68,7 +65,7 @@ class CommentsBloc with ChangeNotifier {
         existingPage.pageCount = int.parse(response.pageCount);
         pages[page] = existingPage;
       } else {
-        pages.add(Page(response.comments, _pageCount, _currentPage));
+        pages.add(Page(response.comments, _pageCount, currentPage));
       }
       if (page == 0) {
         for (var i = 0; i < _pageCount; i++) {
