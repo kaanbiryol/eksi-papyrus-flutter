@@ -34,7 +34,7 @@ class CommentsWidget extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(builder: (_) => CommentsBloc(1)),
           ChangeNotifierProvider(
-              builder: (_) => CommentsPageScrollNotifier(1, 1)),
+              builder: (_) => CommentsPageScrollNotifier(1, -1)),
         ],
         child: Scaffold(
             backgroundColor: Theme.of(context).backgroundColor,

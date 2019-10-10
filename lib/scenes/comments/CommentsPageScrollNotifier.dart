@@ -15,7 +15,8 @@ class CommentsPageScrollNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  currentPage() => _currentPage;
+  int currentPage() => _currentPage;
+  int totalPage() => _totalPage;
 
   String currentPageText() =>
       _currentPage.toString() + "/" + _totalPage.toString();
