@@ -12,11 +12,14 @@ class CommentsPagePickerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      color: Theme.of(context).backgroundColor,
-      child: Padding(
-          padding: const EdgeInsets.all(16.0), child: makeListView(context)),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8.0),
+      child: Container(
+        height: 300,
+        color: Theme.of(context).backgroundColor,
+        child: Padding(
+            padding: const EdgeInsets.all(16.0), child: makeListView(context)),
+      ),
     );
   }
 

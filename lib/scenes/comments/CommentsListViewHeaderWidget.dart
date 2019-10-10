@@ -47,6 +47,12 @@ class _CommentsListViewHeaderWidgetState
                 onPressed: () {
                   showModalBottomSheet<void>(
                       context: context,
+                      backgroundColor: Theme.of(context).backgroundColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8.0),
+                            topRight: Radius.circular(8.0)),
+                      ),
                       builder: (BuildContext context) {
                         return CommentsPagePickerWidget(
                           pageCount: commentsBloc.getPageCount(),

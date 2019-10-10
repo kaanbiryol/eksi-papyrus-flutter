@@ -23,18 +23,32 @@ class CommentsListViewWidget extends StatefulWidget {
 
 class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   PageController _pageController;
-  List<AsyncMemoizer> memoizer = [];
+  ScrollController _scrollController;
+  List<AsyncMemoizer> memoizer;
 
   @override
   void initState() {
     print("initState");
     _pageController = PageController();
+    _scrollController = ScrollController()..addListener(onScroll);
+    memoizer = [];
     super.initState();
+  }
+
+  void onScroll() {
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    int currentPage = _pageController.page.toInt();
+    if (_scrollController.offset + 500 >=
+            _scrollController.position.maxScrollExtent &&
+        commentsBloc.canPaginate(currentPage)) {
+      loadMorePagination(context, currentPage);
+    }
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -182,11 +196,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
               scrollPageNotifier.setCurrentPage((page + 1) + currentPage);
             }
           });
-        }
-        if (scrollInfo is ScrollEndNotification &&
-            scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
-            canPaginate) {
-          loadMorePagination(context, page);
           return true;
         }
         return false;
@@ -195,6 +204,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
           Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(
           child: ListView.separated(
+              controller: _scrollController,
               separatorBuilder: (context, index) => Divider(height: 1.0),
               itemCount: itemCount,
               itemBuilder: (BuildContext context, int index) {
