@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
-import 'CommentsTypePickerWidget.dart';
+//TODO: move this
+typedef IntCallback = void Function(int);
 
 class CommentsPagePickerWidget extends StatelessWidget {
-  const CommentsPagePickerWidget({Key key, this.pageCount}) : super(key: key);
+  const CommentsPagePickerWidget({Key key, this.pageCount, this.onPageSelected})
+      : super(key: key);
   final int pageCount;
+  final IntCallback onPageSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +34,7 @@ class CommentsPagePickerWidget extends StatelessWidget {
       textColor: Theme.of(context).primaryTextTheme.title.color,
       child: Text("Page " + (index + 1).toString()),
       onPressed: () {
-        final typePickerBloc =
-            Provider.of<CommentsFilterBloc>(context, listen: false);
-        typePickerBloc.setFilteredPage(index);
+        onPageSelected(index);
         Navigator.of(context).pop();
       },
     );

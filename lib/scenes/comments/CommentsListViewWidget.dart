@@ -8,30 +8,9 @@ import 'package:provider/provider.dart';
 
 import 'CommentsBloc.dart';
 import 'CommentsPagePickerWidget.dart';
+import 'CommentsPageScrollNotifier.dart';
 import 'CommentsTypePickerWidget.dart';
-import 'networking/models/CommentsRequest.dart';
 import 'networking/models/CommentsResponse.dart';
-
-class ScrollPageNotifier extends ChangeNotifier {
-  int _currentPage = 0;
-  int _totalPage = 1;
-  ScrollPageNotifier(this._currentPage, this._totalPage);
-
-  void setCurrentPage(int page) {
-    _currentPage = page;
-    notifyListeners();
-  }
-
-  void setTotalPage(int page) {
-    _totalPage = page;
-    notifyListeners();
-  }
-
-  currentPage() => _currentPage;
-
-  String currentPageText() =>
-      _currentPage.toString() + "/" + _totalPage.toString();
-}
 
 class CommentsListViewWidget extends StatefulWidget {
   const CommentsListViewWidget({Key key, this.topic, this.isQuery})
@@ -61,6 +40,10 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     super.dispose();
   }
 
+  void onPageChanged(int page) {
+    _pageController.jumpToPage(page);
+  }
+
   @override
   Widget build(BuildContext context) {
     print("CommentsListViewWidget BUILT");
@@ -68,9 +51,11 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Container(
-          height: 50,
-          child: buildListHeaderView(context),
+        Card(
+          elevation: 0.6,
+          child: CommentsListViewHeaderWidget(
+            onPageChanged: onPageChanged,
+          ),
         ),
         Expanded(child: makeFutureBuilder(context))
       ],
@@ -134,9 +119,8 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     for (var i = 0; i < commentsBloc.getPageCount(); i++) {
       memoizer.add(new AsyncMemoizer());
     }
-
     final scrollPageNotifier =
-        Provider.of<ScrollPageNotifier>(context, listen: false);
+        Provider.of<CommentsPageScrollNotifier>(context, listen: false);
     //scrollPageNotifier.setTotalPage(commentsBloc.getPageCount());
     return PageView.builder(
       controller: _pageController,
@@ -174,7 +158,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   Widget makeListViewHandler(BuildContext context, int page) {
     print("makeListVieHandler" + page.toString());
     final scrollPageNotifier =
-        Provider.of<ScrollPageNotifier>(context, listen: false);
+        Provider.of<CommentsPageScrollNotifier>(context, listen: false);
     final commentsBloc = Provider.of<CommentsBloc>(context);
     var itemList = commentsBloc.getCommentList(page);
     var canPaginate = commentsBloc.canPaginate(page);
@@ -185,7 +169,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
           Future.microtask(() {
             int currentItemIndex = getMeta(0, 50);
             int currentPage = currentItemIndex ~/ 10;
-            if (scrollPageNotifier._currentPage != currentPage) {
+            if (scrollPageNotifier.currentPage() != currentPage) {
               scrollPageNotifier.setCurrentPage((page + 1) + currentPage);
             }
           });
@@ -282,13 +266,21 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     return commentsBloc.fetchComments(
         widget.topic.url, widget.topic.commentType, pageCount, page, true);
   }
+}
 
-  Widget buildListHeaderView(BuildContext context) {
+class CommentsListViewHeaderWidget extends StatefulWidget {
+  CommentsListViewHeaderWidget({Key key, this.onPageChanged}) : super(key: key);
+  final IntCallback onPageChanged;
+  _CommentsListViewHeaderWidgetState createState() =>
+      _CommentsListViewHeaderWidgetState();
+}
+
+class _CommentsListViewHeaderWidgetState
+    extends State<CommentsListViewHeaderWidget> {
+  @override
+  Widget build(BuildContext context) {
     print("buildListheaderView");
-    final typePickerBloc =
-        Provider.of<CommentsFilterBloc>(context, listen: false);
-    final scrollPageNotifier =
-        Provider.of<ScrollPageNotifier>(context, listen: false);
+    final scrollPageNotifier = Provider.of<CommentsPageScrollNotifier>(context);
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     return Container(
       height: 40,
@@ -302,7 +294,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
                 color: Theme.of(context).primaryIconTheme.color,
                 icon: Icon(Icons.first_page),
                 onPressed: () {
-                  _pageController.jumpToPage(0);
+                  widget.onPageChanged(0);
                 }),
             FlatButton(
               padding: EdgeInsets.all(3.0),
@@ -314,47 +306,51 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
                     context: context,
                     builder: (BuildContext context) {
                       return CommentsPagePickerWidget(
-                          pageCount: commentsBloc.getPageCount());
-                    });
-              },
-            ),
-            FlatButton(
-              padding: EdgeInsets.all(3.0),
-              color: Colors.transparent,
-              textColor: Theme.of(context).textTheme.subtitle.color,
-              child: Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Icon(
-                      Icons.sort,
-                      color: Theme.of(context).accentIconTheme.color,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Text(
-                      "Bugün",
-                      style: Theme.of(context).textTheme.subtitle,
-                    ),
-                  ),
-                ],
-              ),
-              onPressed: () {
-                showModalBottomSheet<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return CommentsTypePickerWidget(
-                        commentType: CommentType.all,
+                        pageCount: commentsBloc.getPageCount(),
+                        onPageSelected: (page) {
+                          widget.onPageChanged(page);
+                        },
                       );
                     });
               },
             ),
+            // FlatButton(
+            //   padding: EdgeInsets.all(3.0),
+            //   color: Colors.transparent,
+            //   textColor: Theme.of(context).textTheme.subtitle.color,
+            //   child: Row(
+            //     children: <Widget>[
+            //       Padding(
+            //         padding: const EdgeInsets.all(2.0),
+            //         child: Icon(
+            //           Icons.sort,
+            //           color: Theme.of(context).accentIconTheme.color,
+            //         ),
+            //       ),
+            //       Padding(
+            //         padding: const EdgeInsets.all(2.0),
+            //         child: Text(
+            //           "Bugün",
+            //           style: Theme.of(context).textTheme.subtitle,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            //   onPressed: () {
+            //     showModalBottomSheet<void>(
+            //         context: context,
+            //         builder: (BuildContext context) {
+            //           return CommentsTypePickerWidget(
+            //             commentType: CommentType.all,
+            //           );
+            //         });
+            //   },
+            // ),
             IconButton(
                 color: Theme.of(context).primaryIconTheme.color,
                 icon: Icon(Icons.last_page),
                 onPressed: () {
-                  _pageController.jumpToPage(commentsBloc.getPageCount() - 1);
+                  widget.onPageChanged(commentsBloc.getPageCount() - 1);
                 }),
           ],
         ),
