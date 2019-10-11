@@ -24,14 +24,14 @@ class CommentsListViewWidget extends StatefulWidget {
 class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   PageController _pageController;
   ScrollController _scrollController;
-  List<AsyncMemoizer> memoizer;
+  List<AsyncMemoizer> _memoizer;
 
   @override
   void initState() {
     print("initState");
     _pageController = PageController();
     _scrollController = ScrollController()..addListener(onScroll);
-    memoizer = [];
+    _memoizer = [];
     super.initState();
   }
 
@@ -142,12 +142,11 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   Widget makePageView(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => setTotalPages(context));
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
-    for (var i = 0; i < commentsBloc.getPageCount(); i++) {
-      memoizer.add(new AsyncMemoizer());
-    }
+    resetMemoizers(commentsBloc.getPageCount());
     final scrollPageNotifier =
         Provider.of<CommentsPageScrollNotifier>(context, listen: false);
     return PageView.builder(
+      
       controller: _pageController,
       itemBuilder: (context, index) {
         if (index == 0) {
@@ -259,7 +258,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   Future loadMore(BuildContext context, int page) {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     var pageCount = commentsBloc.pages[page].currentPage;
-    return memoizer[page].runOnce(() async {
+    return _memoizer[page].runOnce(() async {
       return commentsBloc.fetchComments(
           widget.topic.url, widget.topic.commentType, pageCount, page, false);
     });
@@ -270,6 +269,12 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     var pageCount = commentsBloc.pages[page].currentPage;
     return commentsBloc.fetchComments(
         widget.topic.url, widget.topic.commentType, pageCount, page, true);
+  }
+
+  void resetMemoizers(int numberOfPages) {
+    for (var i = 0; i < numberOfPages; i++) {
+      _memoizer.add(new AsyncMemoizer());
+    }
   }
 
   T getMeta<T>(double x, double y) {

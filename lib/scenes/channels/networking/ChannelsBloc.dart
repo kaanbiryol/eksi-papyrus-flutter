@@ -23,22 +23,25 @@ class ChannelsBloc with ChangeNotifier {
   Future<List<Channel>> fetchUserChannels() async {
     return ChannelsRequest().getChannels().then((response) {
       _channels = response.channels;
-      setUserChannels();
-      notifyListeners();
+      if (_userChannels.isEmpty) {
+        _userChannels = _channels;
+        setUserChannels();
+        notifyListeners();
+      }
       return _userChannels;
     });
   }
 
   Future<void> setUserChannels() async {
-    List<Channel> userChannels = await SharedPreferencesUtils.getUserChannels();
-    if (userChannels.isEmpty) {
-      userChannels = _channels;
-      _userChannels = userChannels;
-      //TODO consider if this fails
-      SharedPreferencesUtils.setUserChannels(userChannels);
+    List<Channel> savedChannels =
+        await SharedPreferencesUtils.getUserChannels();
+    if (savedChannels.isEmpty) {
+      savedChannels = _channels;
+      _userChannels = savedChannels;
+      SharedPreferencesUtils.setUserChannels(savedChannels);
     } else {
       //TODO: Case 1: User selected all of them but a channel has been deleted
-      _userChannels = userChannels;
+      _userChannels = savedChannels;
     }
   }
 }

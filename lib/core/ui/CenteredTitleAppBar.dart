@@ -39,14 +39,10 @@ class _CenteredTitleAppBarState extends State<CenteredTitleAppBar>
   Widget build(BuildContext context) {
     print("Built state");
     //TODO: might move this to init state?
-    var channelsBloc = Provider.of<ChannelsBloc>(context, listen: true);
-    var userChannels = channelsBloc.getUserChannels();
+    var channelsBloc = Provider.of<ChannelsBloc>(context);
+    channelsBloc.fetchUserChannels();
     _tabController = TabController(
         vsync: this, length: channelsBloc.getUserChannels().length);
-    //TODO: fix me
-    if (userChannels.isEmpty) {
-      channelsBloc.fetchUserChannels();
-    }
     return Scaffold(
         appBar: appBar(channelsBloc.getUserChannels()),
         body: TabBarView(
