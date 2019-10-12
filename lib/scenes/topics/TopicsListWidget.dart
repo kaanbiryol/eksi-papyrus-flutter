@@ -18,6 +18,10 @@ class TopicsListWidget extends StatefulWidget {
 
 class _TopicsListWidgetState extends State<TopicsListWidget>
     with AutomaticKeepAliveClientMixin {
+  final topicType = CommentType.today;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+
   @override
   Widget build(BuildContext context) {
     print("REBUILT DefaultTabController");
@@ -40,7 +44,7 @@ class _TopicsListWidgetState extends State<TopicsListWidget>
     final notifier = Provider.of<TopicsBloc>(context, listen: false);
     return FutureBuilder(
       key: PageStorageKey<String>(key.value),
-      future: notifier.fetchTopics(widget.channelUrl, key, CommentType.today),
+      future: notifier.fetchTopics(widget.channelUrl, key, topicType),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -77,27 +81,21 @@ class _TopicsListWidgetState extends State<TopicsListWidget>
             loadMore(context);
           }
         },
-        child: ListView.separated(
-          separatorBuilder: (context, index) => Divider(height: 1),
-          itemCount: itemCount,
-          itemBuilder: (BuildContext context, int index) {
-            return (index + 1 == itemCount && canPaginate)
-                ? loadMoreProgress(context)
-                : makeListTile(notifier.getPopularTopics2(key)[index], context);
-          },
+        child: RefreshIndicator(
+          backgroundColor: Theme.of(context).backgroundColor,
+          key: _refreshIndicatorKey,
+          onRefresh: onRefresh,
+          child: ListView.separated(
+            separatorBuilder: (context, index) => Divider(height: 1),
+            itemCount: itemCount,
+            itemBuilder: (BuildContext context, int index) {
+              return (index + 1 == itemCount && canPaginate)
+                  ? loadMoreProgress(context)
+                  : makeListTile(
+                      notifier.getPopularTopics2(key)[index], context);
+            },
+          ),
         ));
-  }
-
-  int calculateItemlistCount(List<Topic> topicList, bool canPaginate) {
-    if (topicList != null) {
-      if (canPaginate) {
-        return topicList.length + 1;
-      } else {
-        return topicList.length;
-      }
-    } else {
-      return 0;
-    }
   }
 
   Widget makeListTile(Topic topic, BuildContext context) {
@@ -150,7 +148,24 @@ class _TopicsListWidgetState extends State<TopicsListWidget>
   void loadMore(BuildContext context) {
     print("Load More");
     final notifier = Provider.of<TopicsBloc>(context, listen: false);
-    notifier.fetchTopics(widget.channelUrl, widget.key, CommentType.today);
+    notifier.fetchTopics(widget.channelUrl, widget.key, topicType);
+  }
+
+  Future<void> onRefresh() {
+    final notifier = Provider.of<TopicsBloc>(context, listen: false);
+    return notifier.refresh(widget.key);
+  }
+
+  int calculateItemlistCount(List<Topic> topicList, bool canPaginate) {
+    if (topicList != null) {
+      if (canPaginate) {
+        return topicList.length + 1;
+      } else {
+        return topicList.length;
+      }
+    } else {
+      return 0;
+    }
   }
 
   @override

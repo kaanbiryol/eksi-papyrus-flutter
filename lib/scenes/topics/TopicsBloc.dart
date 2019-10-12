@@ -16,6 +16,12 @@ class TopicList {
   Future<TopicsResponse> fetchTopics() {
     return TopicsRequest().getTopics(_currentPage, url);
   }
+
+  void reset() {
+    _currentPage = 0;
+    _pageCount = 1;
+    topicList.clear();
+  }
 }
 
 class TopicsBloc with ChangeNotifier {
@@ -24,22 +30,8 @@ class TopicsBloc with ChangeNotifier {
 
   TopicsBloc(this.topics);
 
-  // Future<TopicsResponse> fetchPopularTopics() {
-  //   return PopularTopicsRequest()
-  //       .getPopularTopics(topics)
-  //       .then((response) {
-  //     topics.addAll(response.topics);
-  //     notifyListeners();
-  //     return response;
-  //   });
-  // }
-
   List<Topic> getPopularTopics2(ValueKey key) {
     return topicsMap[key.value].topicList;
-  }
-
-  List<Topic> getPopularTopics(String key) {
-    return topics;
   }
 
   bool hasTopicsInPage(ValueKey key) {
@@ -52,8 +44,6 @@ class TopicsBloc with ChangeNotifier {
 
   bool canPaginate(ValueKey key) {
     var topicList = topicsMap[key.value];
-    // var test = topicList._currentPage + 1 <= topicList._pageCount;
-    // print("CANPAGINATE" + test.toString());
     return topicList._currentPage + 1 <= topicList._pageCount;
   }
 
@@ -82,7 +72,10 @@ class TopicsBloc with ChangeNotifier {
       return response;
     });
   }
-}
 
-//TODO : an idea
-class PopularTopicsNotifierInteractor {}
+  Future<TopicsResponse> refresh(ValueKey key) {
+    var topic = topicsMap[key.value];
+    topic.reset();
+    return fetchTopics(topic.url, key, CommentType.all);
+  }
+}
