@@ -86,6 +86,7 @@ class _TopicsListWidgetState extends State<TopicsListWidget>
           key: _refreshIndicatorKey,
           onRefresh: onRefresh,
           child: ListView.separated(
+            physics: AlwaysScrollableScrollPhysics(),
             separatorBuilder: (context, index) => Divider(height: 1),
             itemCount: itemCount,
             itemBuilder: (BuildContext context, int index) {
