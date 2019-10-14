@@ -24,7 +24,10 @@ class CommentsPagePickerWidget extends StatelessWidget {
   }
 
   Widget makeListView(BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
+      separatorBuilder: (context, index) {
+        return Divider(height: 1);
+      },
       itemCount: pageCount,
       itemBuilder: (BuildContext context, int index) {
         return buildPageButton(context, index);

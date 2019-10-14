@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'CommentsBloc.dart';
 import 'CommentsListViewHeaderWidget.dart';
 import 'CommentsPageScrollNotifier.dart';
+import 'CommentsTypePickerWidget.dart';
+import 'networking/models/CommentsRequest.dart';
 import 'networking/models/CommentsResponse.dart';
 
 class CommentsListViewWidget extends StatefulWidget {
@@ -25,6 +27,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   PageController _pageController;
   ScrollController _scrollController;
   List<AsyncMemoizer> _memoizer;
+  int previousPage = -1;
 
   @override
   void initState() {
@@ -146,7 +149,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     final scrollPageNotifier =
         Provider.of<CommentsPageScrollNotifier>(context, listen: false);
     return PageView.builder(
-      
       controller: _pageController,
       itemBuilder: (context, index) {
         if (index == 0) {
@@ -172,6 +174,8 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       itemCount: commentsBloc.getPageCount(),
       scrollDirection: Axis.horizontal,
       onPageChanged: (index) {
+        print("index" + index.toString());
+        previousPage = index;
         scrollPageNotifier.setCurrentPage(index + 1);
       },
     );
@@ -189,7 +193,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       onNotification: (ScrollNotification scrollInfo) {
         if (scrollInfo is ScrollEndNotification) {
           Future.microtask(() {
-            int currentItemIndex = getMeta(0, 50);
+            int currentItemIndex = getMeta(0, 50) ?? 0;
             print("currentItemIndex" + currentItemIndex.toString());
             int currentPage = currentItemIndex ~/ 10;
             print(scrollPageNotifier.currentPage().toString() +
@@ -224,7 +228,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
                     metaData: index,
                     child: decideListItem(
                         context,
-                        itemCount,
+                        itemCount + 1,
                         index,
                         canPaginate,
                         index >= itemList.length
@@ -238,6 +242,48 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
 
   Widget decideListItem(BuildContext context, int itemCount, int index,
       bool canPaginate, Comment comment) {
+    final page = _pageController.position.minScrollExtent == null
+        ? _pageController.initialPage
+        : _pageController.page;
+    print(page.toInt().toString() + " - " + previousPage.toString());
+    if (index == 0 && page.toInt() == 0 && previousPage != 0) {
+      return Container(
+        height: 40,
+        color: Color.fromRGBO(234, 234, 234, 1),
+        child: FlatButton(
+          padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+          color: Colors.transparent,
+          textColor: Theme.of(context).textTheme.subtitle.color,
+          child: Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Icon(
+                  Icons.sort,
+                  color: Theme.of(context).accentIconTheme.color,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Text(
+                  "Bugün",
+                  style: Theme.of(context).textTheme.subtitle,
+                ),
+              ),
+            ],
+          ),
+          onPressed: () {
+            showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return CommentsTypePickerWidget(
+                    commentType: CommentType.all,
+                  );
+                });
+          },
+        ),
+      );
+    }
     if (index + 1 == itemCount && canPaginate) {
       return loadMoreProgress(context);
     } else if (index > 0 && index % 10 == 0) {
@@ -250,7 +296,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   Widget buildPageMark(BuildContext context, int index) {
     return Container(
       height: 50,
-      color: Theme.of(context).accentColor,
+      color: Color.fromRGBO(18, 18, 18, 0.2),
       child: Center(child: Text("Page " + (index ~/ 10 + 1).toString())),
     );
   }
