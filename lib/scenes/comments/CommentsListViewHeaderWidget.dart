@@ -63,38 +63,6 @@ class _CommentsListViewHeaderWidgetState
                       });
                 },
               ),
-              // FlatButton(
-              //   padding: EdgeInsets.all(3.0),
-              //   color: Colors.transparent,
-              //   textColor: Theme.of(context).textTheme.subtitle.color,
-              //   child: Row(
-              //     children: <Widget>[
-              //       Padding(
-              //         padding: const EdgeInsets.all(2.0),
-              //         child: Icon(
-              //           Icons.sort,
-              //           color: Theme.of(context).accentIconTheme.color,
-              //         ),
-              //       ),
-              //       Padding(
-              //         padding: const EdgeInsets.all(2.0),
-              //         child: Text(
-              //           "Bugün",
-              //           style: Theme.of(context).textTheme.subtitle,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              //   onPressed: () {
-              //     showModalBottomSheet<void>(
-              //         context: context,
-              //         builder: (BuildContext context) {
-              //           return CommentsTypePickerWidget(
-              //             commentType: CommentType.all,
-              //           );
-              //         });
-              //   },
-              // ),
               IconButton(
                   color: Theme.of(context).primaryIconTheme.color,
                   icon: Icon(Icons.last_page),

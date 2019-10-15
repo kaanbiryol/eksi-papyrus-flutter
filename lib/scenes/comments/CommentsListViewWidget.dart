@@ -1,5 +1,6 @@
 import 'package:async/async.dart';
 import 'package:eksi_papyrus/scenes/comments/CommentsListTile.dart';
+import 'package:eksi_papyrus/scenes/comments/CommentsTypeHeader.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -8,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'CommentsBloc.dart';
 import 'CommentsListViewHeaderWidget.dart';
 import 'CommentsPageScrollNotifier.dart';
-import 'CommentsTypePickerWidget.dart';
 import 'networking/models/CommentsRequest.dart';
 import 'networking/models/CommentsResponse.dart';
 
@@ -45,6 +45,11 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
         commentsBloc.canPaginate(currentPage)) {
       loadMorePagination(context, currentPage);
     }
+  }
+
+  void onTypeChanged(CommentType type) {
+    widget.topic.commentType = type;
+    setState(() {});
   }
 
   @override
@@ -223,7 +228,9 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
 
                 if (hasTypePicker) {
                   if (index == 0) {
-                    return listFilterHeader(context);
+                    return CommentsTypeHeader(
+                        onTypeChanged: onTypeChanged,
+                        commentType: widget.topic.commentType);
                   }
                   index -= 1;
                 }
@@ -242,45 +249,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
               }),
         )
       ]),
-    );
-  }
-
-  Widget listFilterHeader(BuildContext context) {
-    return Container(
-      height: 40,
-      color: Color.fromRGBO(234, 234, 234, 1),
-      child: FlatButton(
-        padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
-        color: Colors.transparent,
-        textColor: Theme.of(context).textTheme.subtitle.color,
-        child: Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Icon(
-                Icons.sort,
-                color: Theme.of(context).accentIconTheme.color,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Text(
-                "Bugün",
-                style: Theme.of(context).textTheme.subtitle,
-              ),
-            ),
-          ],
-        ),
-        onPressed: () {
-          showModalBottomSheet<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return CommentsTypePickerWidget(
-                  commentType: CommentType.all,
-                );
-              });
-        },
-      ),
     );
   }
 

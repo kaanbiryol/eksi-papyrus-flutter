@@ -4,61 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-class CommentsFilterBloc extends ChangeNotifier {
-  CommentType _commentType;
-  int _filteredPage = 0;
-  CommentsFilterBloc(this._commentType);
-
-  get commentType => _commentType;
-  get filteredPage => _filteredPage;
-
-  void setCommentType(CommentType commentType) {
-    if (this._commentType == commentType) {
-      return;
-    }
-    this._commentType = commentType;
-    notifyListeners();
-  }
-
-  void setFilteredPage(int page) {
-    if (page == _filteredPage) {
-      return;
-    }
-    this._filteredPage = page;
-    notifyListeners();
-  }
-}
+typedef CommentTypeCallback = void Function(CommentType);
 
 class CommentsTypePickerWidget extends StatelessWidget {
-  const CommentsTypePickerWidget({Key key, this.commentType}) : super(key: key);
+  const CommentsTypePickerWidget({Key key, this.commentType, this.typeCallback})
+      : super(key: key);
   final CommentType commentType;
+  final CommentTypeCallback typeCallback;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 120,
-        color: Theme.of(context).backgroundColor,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: buildCommentTypeButtons(context)));
+    return ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+            height: 180,
+            color: Theme.of(context).backgroundColor,
+            child: buildCommentTypeButtons(context)));
   }
 
-  List<Widget> buildCommentTypeButtons(BuildContext context) {
-    List<Widget> typeButtons = [];
-
-    for (var commentType in CommentType.values) {
-      if (commentType == CommentType.popular) {
-        typeButtons.add(Divider(
-          height: 1,
-        ));
-        continue;
-      }
-      var button = buildCommentTypeButton(context, commentType);
-      typeButtons.add(button);
-    }
-
-    return typeButtons;
+  Widget buildCommentTypeButtons(BuildContext context) {
+    List<CommentType> commentTypes = CommentType.values;
+    return ListView.separated(
+      separatorBuilder: (context, index) {
+        return Divider(height: 1);
+      },
+      itemCount: commentTypes.length,
+      itemBuilder: (BuildContext context, int index) {
+        return buildCommentTypeButton(context, commentTypes[index]);
+      },
+    );
   }
 
   Widget buildCommentTypeButton(BuildContext context, CommentType commentType) {
@@ -95,9 +69,7 @@ class CommentsTypePickerWidget extends StatelessWidget {
         ],
       ),
       onPressed: () {
-        final typePickerBloc =
-            Provider.of<CommentsFilterBloc>(context, listen: false);
-        typePickerBloc.setCommentType(commentType);
+        typeCallback(commentType);
         Navigator.of(context).pop();
       },
     );

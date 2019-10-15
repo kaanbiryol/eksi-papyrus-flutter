@@ -46,8 +46,6 @@ class _MyAppState extends State<MyApp> {
             builder: (_) => ChannelsBloc(widget.userChannels)),
         ChangeNotifierProvider(builder: (_) => SearchResultBloc([])),
         ChangeNotifierProvider(builder: (_) => ThemeBloc(widget.themeType)),
-        ChangeNotifierProvider(
-            builder: (_) => CommentsFilterBloc(CommentType.all)),
       ],
       child: ThemedMaterialApp(),
     );
