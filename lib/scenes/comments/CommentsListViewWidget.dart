@@ -27,7 +27,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   PageController _pageController;
   ScrollController _scrollController;
   List<AsyncMemoizer> _memoizer;
-  int previousPage = -1;
 
   @override
   void initState() {
@@ -152,7 +151,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       controller: _pageController,
       itemBuilder: (context, index) {
         if (index == 0) {
-          return makeListViewHandler(context, index);
+          return makeListViewHandler(context, index, true);
         }
         return FutureBuilder(
           key: PageStorageKey(index),
@@ -164,7 +163,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
               case ConnectionState.waiting:
                 return Center(child: CircularProgressIndicator());
               case ConnectionState.done:
-                return makeListViewHandler(context, index);
+                return makeListViewHandler(context, index, false);
               default:
                 return Column();
             }
@@ -174,14 +173,13 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
       itemCount: commentsBloc.getPageCount(),
       scrollDirection: Axis.horizontal,
       onPageChanged: (index) {
-        print("index" + index.toString());
-        previousPage = index;
         scrollPageNotifier.setCurrentPage(index + 1);
       },
     );
   }
 
-  Widget makeListViewHandler(BuildContext context, int page) {
+  Widget makeListViewHandler(
+      BuildContext context, int page, bool hasTypePicker) {
     print("makeListVieHandler" + page.toString());
     final scrollPageNotifier =
         Provider.of<CommentsPageScrollNotifier>(context, listen: false);
@@ -194,7 +192,6 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
         if (scrollInfo is ScrollEndNotification) {
           Future.microtask(() {
             int currentItemIndex = getMeta(0, 50) ?? 0;
-            print("currentItemIndex" + currentItemIndex.toString());
             int currentPage = currentItemIndex ~/ 10;
             print(scrollPageNotifier.currentPage().toString() +
                 " - " +
@@ -213,7 +210,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
           child: ListView.separated(
               controller: _scrollController,
               separatorBuilder: (context, index) => Divider(height: 1.0),
-              itemCount: itemCount,
+              itemCount: hasTypePicker ? itemCount + 1 : itemCount,
               itemBuilder: (BuildContext context, int index) {
                 // print("Index -> " +
                 //     index.toString() +
@@ -223,67 +220,72 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
                 //     itemCount.toString() +
                 //     "page" +
                 //     (index ~/ 10).toString());
+
+                if (hasTypePicker) {
+                  if (index == 0) {
+                    return listFilterHeader(context);
+                  }
+                  index -= 1;
+                }
                 return MetaData(
                     behavior: HitTestBehavior.translucent,
                     metaData: index,
                     child: decideListItem(
                         context,
-                        itemCount + 1,
+                        itemCount,
                         index,
                         canPaginate,
                         index >= itemList.length
                             ? Comment.empty()
-                            : itemList[index]));
+                            : itemList[index],
+                        hasTypePicker));
               }),
         )
       ]),
     );
   }
 
-  Widget decideListItem(BuildContext context, int itemCount, int index,
-      bool canPaginate, Comment comment) {
-    final page = _pageController.position.minScrollExtent == null
-        ? _pageController.initialPage
-        : _pageController.page;
-    print(page.toInt().toString() + " - " + previousPage.toString());
-    if (index == 0 && page.toInt() == 0 && previousPage != 0) {
-      return Container(
-        height: 40,
-        color: Color.fromRGBO(234, 234, 234, 1),
-        child: FlatButton(
-          padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
-          color: Colors.transparent,
-          textColor: Theme.of(context).textTheme.subtitle.color,
-          child: Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Icon(
-                  Icons.sort,
-                  color: Theme.of(context).accentIconTheme.color,
-                ),
+  Widget listFilterHeader(BuildContext context) {
+    return Container(
+      height: 40,
+      color: Color.fromRGBO(234, 234, 234, 1),
+      child: FlatButton(
+        padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+        color: Colors.transparent,
+        textColor: Theme.of(context).textTheme.subtitle.color,
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Icon(
+                Icons.sort,
+                color: Theme.of(context).accentIconTheme.color,
               ),
-              Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Text(
-                  "Bugün",
-                  style: Theme.of(context).textTheme.subtitle,
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Text(
+                "Bugün",
+                style: Theme.of(context).textTheme.subtitle,
               ),
-            ],
-          ),
-          onPressed: () {
-            showModalBottomSheet<void>(
-                context: context,
-                builder: (BuildContext context) {
-                  return CommentsTypePickerWidget(
-                    commentType: CommentType.all,
-                  );
-                });
-          },
+            ),
+          ],
         ),
-      );
-    }
+        onPressed: () {
+          showModalBottomSheet<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return CommentsTypePickerWidget(
+                  commentType: CommentType.all,
+                );
+              });
+        },
+      ),
+    );
+  }
+
+  Widget decideListItem(BuildContext context, int itemCount, int index,
+      bool canPaginate, Comment comment, bool hasTypePicker) {
     if (index + 1 == itemCount && canPaginate) {
       return loadMoreProgress(context);
     } else if (index > 0 && index % 10 == 0) {
