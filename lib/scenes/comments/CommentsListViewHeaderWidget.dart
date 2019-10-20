@@ -39,29 +39,33 @@ class _CommentsListViewHeaderWidgetState
                   onPressed: () {
                     widget.onPageChanged(0);
                   }),
-              FlatButton(
-                padding: EdgeInsets.all(3.0),
-                color: Colors.transparent,
-                textColor: Theme.of(context).textTheme.subtitle.color,
-                child: Text(scrollPageNotifier.currentPageText()),
-                onPressed: () {
-                  showModalBottomSheet<void>(
-                      context: context,
-                      backgroundColor: Theme.of(context).backgroundColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8.0),
-                            topRight: Radius.circular(8.0)),
-                      ),
-                      builder: (BuildContext context) {
-                        return CommentsPagePickerWidget(
-                          pageCount: commentsBloc.getPageCount(),
-                          onPageSelected: (page) {
-                            widget.onPageChanged(page);
-                          },
-                        );
-                      });
-                },
+              SizedBox(
+                height: 28,
+                child: OutlineButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                  color: Colors.transparent,
+                  textColor: Theme.of(context).textTheme.subtitle.color,
+                  child: Text(scrollPageNotifier.currentPageText()),
+                  onPressed: () {
+                    showModalBottomSheet<void>(
+                        context: context,
+                        backgroundColor: Theme.of(context).backgroundColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8.0),
+                              topRight: Radius.circular(8.0)),
+                        ),
+                        builder: (BuildContext context) {
+                          return CommentsPagePickerWidget(
+                            pageCount: commentsBloc.getPageCount(),
+                            onPageSelected: (page) {
+                              widget.onPageChanged(page);
+                            },
+                          );
+                        });
+                  },
+                ),
               ),
               IconButton(
                   color: Theme.of(context).primaryIconTheme.color,
