@@ -6,7 +6,7 @@ import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,27 +55,25 @@ class CommentsListTile extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 3.0),
-            child: new MarkdownBody(
-                data: comment.comment,
-                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
-                    .copyWith(
-                        p: Theme.of(context).textTheme.body1,
-                        a: TextStyles.commentAccent),
-                onTapLink: (url) {
-                  if (url.startsWith("/?q")) {
-                    var title = url.replaceAll("/?q=", "").replaceAll("+", " ");
-                    var topic = Topic(title, null, url);
-                    Navigator.pushNamed(
-                      context,
-                      RoutingKeys.comments,
-                      arguments: CommentsWidgetRouteArguments(topic, true),
-                    );
-                  } else {
-                    launch(url);
-                  }
-                }),
-          ),
+              padding: const EdgeInsets.only(top: 8.0, bottom: 3.0),
+              child: new Html(
+                  onLinkTap: (url) {
+                    if (url.startsWith("/?q")) {
+                      var title =
+                          url.replaceAll("/?q=", "").replaceAll("+", " ");
+                      var topic = Topic(title, null, url);
+                      Navigator.pushNamed(
+                        context,
+                        RoutingKeys.comments,
+                        arguments: CommentsWidgetRouteArguments(topic, true),
+                      );
+                    } else {
+                      launch(url);
+                    }
+                  },
+                  linkStyle: TextStyles.commentAccent,
+                  useRichText: true,
+                  data: comment.comment)),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
