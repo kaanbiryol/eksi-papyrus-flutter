@@ -71,6 +71,9 @@ class _SavedCommentsListWidgetState extends State<SavedCommentsListWidget> {
   }
 
   Widget _buildItem(int index) {
+    if (index >= widget.commentList.length) {
+      return Container();
+    }
     return CommentsListTile(
         comment: widget.commentList[index],
         likeHandler: () {
@@ -79,6 +82,7 @@ class _SavedCommentsListWidgetState extends State<SavedCommentsListWidget> {
   }
 
   void deleteItem(int index) {
+    widget.commentList.removeAt(index);
     _listKey.currentState.removeItem(
       index,
       (BuildContext context, Animation<double> animation) {

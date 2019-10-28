@@ -38,13 +38,6 @@ class SettingsWidget extends StatelessWidget {
               Divider(
                 height: 1,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-                child: Text(
-                  "Channels",
-                  style: Theme.of(context).textTheme.subhead,
-                ),
-              ),
               ChannelChipWidget()
             ])));
   }

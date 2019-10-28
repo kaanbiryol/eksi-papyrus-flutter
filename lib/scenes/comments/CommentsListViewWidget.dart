@@ -48,6 +48,8 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
   }
 
   void onTypeChanged(CommentType type) {
+    final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
+    commentsBloc.clearPages();
     widget.topic.commentType = type;
     setState(() {});
   }

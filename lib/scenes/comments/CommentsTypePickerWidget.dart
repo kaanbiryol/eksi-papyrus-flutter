@@ -1,8 +1,6 @@
-import 'package:eksi_papyrus/core/styles/AppColors.dart';
 import 'package:eksi_papyrus/scenes/comments/networking/models/CommentsRequest.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 typedef CommentTypeCallback = void Function(CommentType);
 

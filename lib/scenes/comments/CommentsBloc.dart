@@ -32,6 +32,10 @@ class CommentsBloc with ChangeNotifier {
         currentPageViewPage.currentPage < currentPageViewPage.pageCount;
   }
 
+  void clearPages() {
+    pages.clear();
+  }
+
   List<Comment> getCommentList(int index) {
     return pages[index].commentList;
   }

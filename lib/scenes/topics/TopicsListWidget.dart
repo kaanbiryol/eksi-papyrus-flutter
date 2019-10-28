@@ -18,7 +18,7 @@ class TopicsListWidget extends StatefulWidget {
 
 class _TopicsListWidgetState extends State<TopicsListWidget>
     with AutomaticKeepAliveClientMixin {
-  final topicType = CommentType.today;
+  final topicType = CommentType.popular;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
 
