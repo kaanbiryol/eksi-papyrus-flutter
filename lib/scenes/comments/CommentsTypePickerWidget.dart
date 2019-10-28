@@ -40,7 +40,7 @@ class CommentsTypePickerWidget extends StatelessWidget {
     return FlatButton(
       textColor: selected
           ? Theme.of(context).primaryIconTheme.color
-          : Theme.of(context).accentIconTheme.color,
+          : Theme.of(context).accentColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -50,7 +50,7 @@ class CommentsTypePickerWidget extends StatelessWidget {
               IconButton(
                 disabledColor: selected
                     ? Theme.of(context).primaryIconTheme.color
-                    : Theme.of(context).accentIconTheme.color,
+                    : Theme.of(context).accentColor,
                 icon: Icon(makeCommentTypeIcon(commentType)),
                 onPressed: null,
               ),
@@ -60,7 +60,7 @@ class CommentsTypePickerWidget extends StatelessWidget {
           Visibility(
             visible: selected,
             child: Checkbox(
-              checkColor: Colors.red,
+              checkColor: Theme.of(context).accentIconTheme.color,
               activeColor: Colors.transparent,
               onChanged: (bool value) {},
               value: selected,
@@ -89,19 +89,6 @@ class CommentsTypePickerWidget extends StatelessWidget {
         return Icons.today;
       default:
         return Icons.error;
-    }
-  }
-
-  String makeCommentTypeTitle(CommentType commentType) {
-    switch (commentType) {
-      case CommentType.all:
-        return "Hepsi";
-      case CommentType.popular:
-        return "Popüler";
-      case CommentType.today:
-        return "Bugün";
-      default:
-        return "";
     }
   }
 }

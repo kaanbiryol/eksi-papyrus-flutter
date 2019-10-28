@@ -13,7 +13,9 @@ class AppThemes {
     appBarTheme: AppBarTheme(color: AppColors.dark_background),
     dividerColor: AppColors.dark_listDivider,
     primaryIconTheme: IconThemeData(color: AppColors.dark_primaryIcon),
-    accentIconTheme: IconThemeData(color: AppColors.dark_accentIcon),
+    dialogBackgroundColor: AppColors.dark_secondaryBackground,
+    accentIconTheme: IconThemeData(color: AppColors.dark_secondaryAccent),
+    accentTextTheme: TextTheme(body1: TextStyles.darkCommentAccent),
     textTheme: TextTheme(
         headline: TextStyles.navigationBarDarkTitle,
         title: TextStyles.darkTitle,
@@ -33,7 +35,9 @@ class AppThemes {
     primaryIconTheme: IconThemeData(
       color: AppColors.primaryIcon,
     ),
-    accentIconTheme: IconThemeData(color: AppColors.accentIcon),
+    dialogBackgroundColor: AppColors.secondaryBackground,
+    accentIconTheme: IconThemeData(color: AppColors.secondaryAccent),
+    accentTextTheme: TextTheme(body1: TextStyles.lightCommentAccent),
     textTheme: TextTheme(
         headline: TextStyles.navigationBarLightTitle,
         title: TextStyles.lightTitle,

@@ -1,5 +1,4 @@
 import 'package:eksi_papyrus/core/Router.dart';
-import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:eksi_papyrus/core/utils/DateUtils.dart';
 import 'package:eksi_papyrus/core/utils/HiveUtils.dart';
 import 'package:eksi_papyrus/scenes/topics/networking/models/TopicsResponse.dart';
@@ -26,7 +25,7 @@ class CommentsListTile extends StatelessWidget {
       onLongPress: () {
         //TODO: find the equivalent ux in ios
         Fluttertoast.showToast(
-            msg: "Entry copied to clipboard.",
+            msg: "   Entry copied to clipboard.   ",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIos: 1,
@@ -71,7 +70,8 @@ class CommentsListTile extends StatelessWidget {
                       launch(url);
                     }
                   },
-                  linkStyle: TextStyles.commentAccent,
+                  defaultTextStyle: Theme.of(context).textTheme.body1,
+                  linkStyle: Theme.of(context).accentTextTheme.body1,
                   useRichText: true,
                   data: comment.comment)),
           Row(
@@ -89,7 +89,7 @@ class CommentsListTile extends StatelessWidget {
                     width: 16.0,
                     child: IconButton(
                       padding: EdgeInsets.zero,
-                      color: Theme.of(context).accentIconTheme.color,
+                      color: Theme.of(context).accentColor,
                       iconSize: 16,
                       icon: new Icon(Icons.share),
                       onPressed: () {
@@ -142,7 +142,7 @@ class _FavoriteButtonWidgetState extends State<FavoriteButtonWidget> {
         icon: Icon(Icons.favorite),
         color: widget.selected
             ? Colors.red
-            : Theme.of(context).accentIconTheme.color,
+            : Theme.of(context).accentColor,
         onPressed: () {
           widget.selected
               ? HiveUtils.instance.removeComment(widget.comment)

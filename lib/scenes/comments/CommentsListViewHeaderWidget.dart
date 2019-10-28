@@ -1,3 +1,4 @@
+import 'package:eksi_papyrus/core/styles/TextStyles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +43,11 @@ class _CommentsListViewHeaderWidgetState
               SizedBox(
                 height: 28,
                 child: OutlineButton(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryIconTheme.color,
+                  ),
+                  highlightedBorderColor:
+                      Theme.of(context).accentIconTheme.color,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0)),
                   color: Colors.transparent,
@@ -50,7 +56,8 @@ class _CommentsListViewHeaderWidgetState
                   onPressed: () {
                     showModalBottomSheet<void>(
                         context: context,
-                        backgroundColor: Theme.of(context).backgroundColor,
+                        backgroundColor:
+                            Theme.of(context).dialogBackgroundColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(8.0),

@@ -43,12 +43,20 @@ class TextStyles {
       fontWeight: FontWeight.normal,
       fontSize: 14.0);
 
-  static TextStyle get commentAccent => TextStyle(
-      color: AppColors.textAccent,
+  static TextStyle get darkCommentAccent => TextStyle(
+      color: AppColors.dark_secondaryAccent,
+      fontFamily: "Noto",
+      fontWeight: FontWeight.normal,
+      fontSize: 14.0);
+
+  static TextStyle get lightCommentAccent => TextStyle(
+      color: AppColors.secondaryAccent,
       fontFamily: "Noto",
       fontWeight: FontWeight.normal,
       fontSize: 14.0);
 
   static TextStyle get darkSettingsTitle => TextStyle(
-      color: AppColors.textAccent, fontWeight: FontWeight.bold, fontSize: 13.0);
+      color: AppColors.dark_accent,
+      fontWeight: FontWeight.bold,
+      fontSize: 13.0);
 }

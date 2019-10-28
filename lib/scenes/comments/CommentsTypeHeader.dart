@@ -12,7 +12,7 @@ class CommentsTypeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 40,
-      color: Color.fromRGBO(234, 234, 234, 1),
+      color: Theme.of(context).dialogBackgroundColor,
       child: FlatButton(
         padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
         color: Colors.transparent,
@@ -23,13 +23,13 @@ class CommentsTypeHeader extends StatelessWidget {
               padding: const EdgeInsets.all(2.0),
               child: Icon(
                 Icons.sort,
-                color: Theme.of(context).accentIconTheme.color,
+                color: Theme.of(context).accentColor,
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: Text(
-                "Bugün",
+                makeCommentTypeTitle(commentType),
                 style: Theme.of(context).textTheme.subtitle,
               ),
             ),
@@ -38,7 +38,7 @@ class CommentsTypeHeader extends StatelessWidget {
         onPressed: () {
           showModalBottomSheet<void>(
               context: context,
-              backgroundColor: Theme.of(context).backgroundColor,
+              backgroundColor: Theme.of(context).dialogBackgroundColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(8.0),

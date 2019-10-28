@@ -7,6 +7,19 @@ import 'CommentsResponse.dart';
 
 enum CommentType { today, popular, all }
 
+String makeCommentTypeTitle(CommentType commentType) {
+  switch (commentType) {
+    case CommentType.all:
+      return "Hepsi";
+    case CommentType.popular:
+      return "Popüler";
+    case CommentType.today:
+      return "Bugün";
+    default:
+      return "";
+  }
+}
+
 class CommentsRequest {
   final Networking networkManager = Networking.instance;
 
