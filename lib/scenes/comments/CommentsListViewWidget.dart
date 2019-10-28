@@ -121,8 +121,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
           widget.topic.title, widget.topic.commentType);
     } else {
       print("isNotQuery");
-      return commentsBloc.fetchComments(
-          widget.topic.url, widget.topic.commentType, 0, 0, false);
+      return commentsBloc.fetchComments(widget.topic.commentType, 0, 0, false);
     }
   }
 
@@ -278,7 +277,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     var pageCount = commentsBloc.pages[page].currentPage;
     return _memoizer[page].runOnce(() async {
       return commentsBloc.fetchComments(
-          widget.topic.url, widget.topic.commentType, pageCount, page, false);
+          widget.topic.commentType, pageCount, page, false);
     });
   }
 
@@ -286,7 +285,7 @@ class _CommentsListViewWidgetState extends State<CommentsListViewWidget> {
     final commentsBloc = Provider.of<CommentsBloc>(context, listen: false);
     var pageCount = commentsBloc.pages[page].currentPage;
     return commentsBloc.fetchComments(
-        widget.topic.url, widget.topic.commentType, pageCount, page, true);
+        widget.topic.commentType, pageCount, page, true);
   }
 
   void resetMemoizers(int numberOfPages) {

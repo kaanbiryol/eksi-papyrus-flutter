@@ -14,48 +14,25 @@ class Page {
 
 class CommentsBloc with ChangeNotifier {
   int _pageCount = 1;
-  //TODO: set topicurl
   String topicUrl;
   CommentType commentType;
   List<Page> pages = [];
+  var _isLoading = false;
 
-  //TODO: move page to backend
-  CommentsBloc() {
+  CommentsBloc({String url}) {
+    this.topicUrl = url;
     pages.add(Page([], 1, 0));
   }
 
-  int getPageCount() => _pageCount;
-
-  bool canPaginate(int index) {
-    Page currentPageViewPage = pages[index];
-    return !_isLoading &&
-        currentPageViewPage.currentPage < currentPageViewPage.pageCount;
-  }
-
-  void clearPages() {
-    pages.clear();
-  }
-
-  List<Comment> getCommentList(int index) {
-    return pages[index].commentList;
-  }
-
-  void setCurrentPage(int page, int index) {
-    pages[index].currentPage = page;
-    notifyListeners();
-  }
-
-  var _isLoading = false;
-
   Future<CommentsResponse> fetchComments(
-      String url, CommentType type, int index, int page, bool isPagination) {
+      CommentType type, int index, int page, bool isPagination) {
     var commentPage = page + 1;
     if (isPagination) {
       commentPage = index + 1;
     }
     _isLoading = true;
     return CommentsRequest()
-        .getComments(url, type, commentPage)
+        .getComments(this.topicUrl, type, commentPage)
         .catchError((onError) {
       print(onError.toString());
     }).then((response) {
@@ -88,6 +65,28 @@ class CommentsBloc with ChangeNotifier {
       String query, CommentType type) async {
     QueryResponse queryResponse = await QueryRequest().query(query);
     String queryUrl = queryResponse.topicUrl;
-    return fetchComments(queryUrl, type, 0, 0, false);
+    this.topicUrl = queryUrl;
+    return fetchComments(type, 0, 0, false);
+  }
+
+  List<Comment> getCommentList(int index) {
+    return pages[index].commentList;
+  }
+
+  int getPageCount() => _pageCount;
+
+  bool canPaginate(int index) {
+    Page currentPageViewPage = pages[index];
+    return !_isLoading &&
+        currentPageViewPage.currentPage < currentPageViewPage.pageCount;
+  }
+
+  void setCurrentPage(int page, int index) {
+    pages[index].currentPage = page;
+    notifyListeners();
+  }
+
+  void clearPages() {
+    pages.clear();
   }
 }
