@@ -1,6 +1,7 @@
 
 # Papyrus for Eksi
 ![](example.gif)
+
 A Flutter application for reading eksi-sozluk from mobile devices. 
 
 ## Background
