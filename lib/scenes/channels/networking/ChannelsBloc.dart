@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:eksi_papyrus/core/utils/SharedPreferencesUtils.dart';
 import 'package:flutter/foundation.dart';
 import 'models/ChannelRequest.dart';
@@ -6,6 +7,7 @@ import 'models/ChannelsResponse.dart';
 class ChannelsBloc with ChangeNotifier {
   List<Channel> _channels = [];
   List<Channel> _userChannels = [];
+  final _channelsMemoizer = new AsyncMemoizer();
 
   ChannelsBloc(this._userChannels);
 
@@ -20,7 +22,11 @@ class ChannelsBloc with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<Channel>> fetchUserChannels() async {
+  Future fetchUserChannels() async {
+    return _channelsMemoizer.runOnce(_fetchUserChannels);
+  }
+
+  Future<List<Channel>> _fetchUserChannels() {
     return ChannelsRequest().getChannels().then((response) {
       _channels = response.channels;
       if (_userChannels.isEmpty) {

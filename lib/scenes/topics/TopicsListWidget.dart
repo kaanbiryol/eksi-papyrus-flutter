@@ -24,6 +24,7 @@ class _TopicsListWidgetState extends State<TopicsListWidget>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     print("REBUILT DefaultTabController");
     return decideWidget(context);
   }
