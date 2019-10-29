@@ -11,7 +11,13 @@ I did not like any of the available [eksi-sozluk](https://eksisozluk.com) apps s
 
 This project was my first attempt at learning Flutter. This repo doesn't contain the architecture or coding styles that I would recommend.
 
-[Here](https://github.com/kaanbiryol/eksi-papyrus-api) is the Python API I used for this project.
+If you would like to run and play with this project;
+
+1. [Here](https://github.com/kaanbiryol/eksi-papyrus-api) is the Python API I implemented for this project. Simply, click on ```Deploy on Heroku``` button and deploy your Heroku app. 
+
+2. Change the variable ```API_BASE_URL``` inside ```core/networking/APIConstants.dart``` with your Heroku app URL.
+
+3. Run Flutter project.
 
 ## Future of this repo
 
