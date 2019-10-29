@@ -26,9 +26,7 @@ dependencies:
   intl: 
   hive_flutter:
   share:
-  async:
   fluttertoast:
-  permission_handler:
   path_provider:
   flutter_html:
 
