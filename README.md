@@ -1,4 +1,3 @@
-
 # Papyrus for Eksi
 ![](example.gif)
 
@@ -19,6 +18,9 @@ This project was my first attempt at learning Flutter. This repo doesn't contain
 I have no plans to develop this further or improve the architecture of the overall app. My goal was to create a usable Flutter app while experiencing the pros and cons of the framework itself. If you wish to improve, feel free to fork or send pull requests. 
 
 ## License
+
+[App icon](https://thenounproject.com/term/drop/1071315/) is created by Alena Atemove from [Noun Project](https://thenounproject.com/)
+
 ```
 MIT License
 
